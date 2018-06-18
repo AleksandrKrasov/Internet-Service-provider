@@ -10,19 +10,17 @@
 <link href="style/style.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-	
 	<div class="login-page">
-	<div class="form">
-		<form action="Controller" method="get" >
-		
-			<input type="hidden" name="command" value="registration"/>
-			<input type="text" name="login" placeholder="Login">
-			<input type="password" name="password" placeholder="Password">
-			<input type="password" name="repeatPassword" placeholder="Password again">
-			<input type="text" name="firstName" placeholder="First name">
-			<input type="text" name="lastName" placeholder="Last name">
-			<button>submit</button>
-		</form>
+		<div class="form">
+			<form action="Controller" method="get" >
+				<input type="hidden" name="command" value="registration"/>
+				<input type="text" name="login" placeholder="Login">
+				<input type="password" name="password" placeholder="Password">
+				<input type="password" name="repeatPassword" placeholder="Password again">
+				<input type="text" name="firstName" placeholder="First name">
+				<input type="text" name="lastName" placeholder="Last name">
+				<button>submit</button>
+			</form>
 		</div>
 	</div>
 </body>

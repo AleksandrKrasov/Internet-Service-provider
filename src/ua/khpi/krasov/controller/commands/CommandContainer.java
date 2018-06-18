@@ -5,10 +5,18 @@ import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
+import ua.khpi.krasov.controller.commands.admin.AdminCommand;
+import ua.khpi.krasov.controller.commands.admin.ClientListCommand;
+import ua.khpi.krasov.controller.commands.client.BillRefillCommand;
+import ua.khpi.krasov.controller.commands.client.ClientCommand;
+import ua.khpi.krasov.controller.commands.client.ClientOrderCommand;
+import ua.khpi.krasov.controller.commands.client.ClientServiceCommand;
+import ua.khpi.krasov.controller.commands.client.ClientTariffCommand;
+
 
 public class CommandContainer {
 	
-private static final Logger log = Logger.getLogger(CommandContainer.class);
+	private static final Logger log = Logger.getLogger(CommandContainer.class);
 	
 	private static Map<String, Command> commands = new TreeMap<String, Command>();
 	
@@ -21,6 +29,10 @@ private static final Logger log = Logger.getLogger(CommandContainer.class);
 		commands.put("clientServices", new ClientServiceCommand());
 		commands.put("clientTariffs", new ClientTariffCommand());
 		commands.put("clientOrders", new ClientOrderCommand());
+		commands.put("client", new ClientCommand());
+		commands.put("settings", new SettingsCommand());
+		commands.put("admin", new AdminCommand());
+		commands.put("clientList", new ClientListCommand());
 		
 		log.debug("Command container was successfully initialized");
 		log.trace("Number of commands --> " + commands.size());

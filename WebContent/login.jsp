@@ -12,18 +12,21 @@
 
 	<c:set var="user" value="${sessionScope.user}"/>
 
-	<c:if test="${not empty user}">
+	<c:if test="${not empty user && user.roleId == 1}">
 		<%@ include file="/WEB-INF/jsp/client/client_head.jsp" %>
+	</c:if>	
+	<c:if test="${not empty user && user.roleId == 0}">
+		<%@ include file="/WEB-INF/jsp/admin/admin_head.jsp" %>
 	</c:if>		
 
 	<div class="login-page">
   		<div class="form">
     		<form class="login-form" action="Controller" method="get">
     			<input type="hidden" name="command" value="login"/>
-      			<input type="text" name="login" placeholder="login"/>
-      			<input type="password" name="password" placeholder="password"/>
+      			<input type="text" name="login" placeholder="Login"/>
+      			<input type="password" name="password" placeholder="Password"/>
       			<button>login</button>
-      			<p class="message">Not registered? <a href="/FinalTask/registration.jsp">Create an account</a></p>
+      			<p class="message">Not registered yet? <a href="/FinalTask/registration.jsp">Create an account</a></p>
     		</form>
   		</div>
 	</div>

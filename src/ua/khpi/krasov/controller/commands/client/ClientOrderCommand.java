@@ -1,4 +1,4 @@
-package ua.khpi.krasov.controller.commands;
+package ua.khpi.krasov.controller.commands.client;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,9 +12,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import ua.khpi.krasov.controller.Path;
+import ua.khpi.krasov.controller.commands.Command;
 import ua.khpi.krasov.db.dao.OrderDao;
 import ua.khpi.krasov.db.dao.ServiceDao;
 import ua.khpi.krasov.db.dao.TariffDao;
+import ua.khpi.krasov.db.dao.UserDao;
 import ua.khpi.krasov.db.dao.interfaces.OrderDaoInterface;
 import ua.khpi.krasov.db.dao.interfaces.ServiceDaoInterface;
 import ua.khpi.krasov.db.dao.interfaces.TariffDaoInterface;
@@ -34,6 +36,10 @@ public class ClientOrderCommand implements Command {
 		HttpSession session = request.getSession();
 		
 		User user = (User) session.getAttribute("user");
+		user = new UserDao().getUserByLogin(user.getLogin());
+		session.setAttribute("user", user);
+		session.setAttribute("status", Status.getStatus(user).getName());
+		log.trace("User refreshed is session.");
 		
 		OrderDaoInterface orderDao = new OrderDao();
 		
@@ -56,6 +62,15 @@ public class ClientOrderCommand implements Command {
 			
 			String errorMessage = null;		
 			String forward = Path.ERROR_PAGE;
+			
+			Status status = Status.getStatus(user);
+			
+			if(!status.equals(Status.CONFIRMED)){
+				log.error("User is not confirmed/blocked");
+				errorMessage = "Yor account is not confirmed/blocked";
+				request.setAttribute("errorMessage", errorMessage);
+				return forward;
+			}
 			
 			try {
 				int orderId = Integer.parseInt(order);

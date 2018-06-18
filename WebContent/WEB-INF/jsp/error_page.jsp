@@ -10,10 +10,13 @@
 </head>
 <body>
 
-	<c:set var="user" value="${sessionScope}"/>
+	<c:set var="user" value="${sessionScope.user}"/>
 
-	<c:if test="${not empty user}">
+	<c:if test="${not empty user && user.roleId == 1}">
 		<%@ include file="/WEB-INF/jsp/client/client_head.jsp" %>
+	</c:if>	
+	<c:if test="${not empty user && user.roleId == 0}">
+		<%@ include file="/WEB-INF/jsp/admin/admin_head.jsp" %>
 	</c:if>		
 
 	<div class="error">

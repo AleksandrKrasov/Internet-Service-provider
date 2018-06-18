@@ -22,11 +22,18 @@ public class ValidationUtil {
 		return true;
 	}
 	
+	public static boolean validateUser(User user) {
+		if(user.getLogin().length() > 10 || user.getPassword().length() > 10 ||
+				user.getFirstName().length() > 20 || user.getLastName().length() > 20)
+			return false;
+		return true;
+	}
+	
 	public static boolean validateOrder(Order order, OrderDaoInterface orderDao) {
 		List<Order> list = orderDao.getAllOrders();
 		for (int i = 0; i < list.size(); i++) {
 			if(list.get(i).getServiceId() == order.getServiceId() &&
-					list.get(i).getTariffId() == order.getTariffId()) {
+					list.get(i).getUserId() == order.getUserId()) {
 				return false;
 			}
 		}

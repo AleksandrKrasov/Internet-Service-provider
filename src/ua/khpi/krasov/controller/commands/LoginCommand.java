@@ -72,18 +72,15 @@ public class LoginCommand implements Command{
 		session.setAttribute("status", status.getName());
 		log.trace("Set the session attribute: status --> " + status);
 		
-		
-		
 		if(role.equals(Role.ADMIN)) {
-			//TODO change
-			return null;
+			log.trace("User as admin.");
+			response.sendRedirect(Path.ADMIN_REDIRECT_PAGE);
 		}
 		
 		if(role.equals(Role.CLIENT)) {
 			log.trace("User as client.");
-			return Path.CLIENT_PAGE;
+			response.sendRedirect(Path.CLIENT_REDIRECT_PAGE);
 		}
-		
 		
 		log.debug("Login command finished");
 		return null;

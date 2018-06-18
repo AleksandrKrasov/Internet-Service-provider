@@ -10,6 +10,8 @@ public interface UserDaoInterface {
 	
 	List<User> getAllUsers();
 	
+	List<User> getAllClients();
+	
 	boolean insertUser(User user);
 	
 	User extractUser(ResultSet rs) throws SQLException;
@@ -28,6 +30,6 @@ public interface UserDaoInterface {
 	
 	boolean updateStatus(User user);
 	
-	boolean deleteUser(User user);
+	boolean deleteUserByLogin(String login);
 	
 }

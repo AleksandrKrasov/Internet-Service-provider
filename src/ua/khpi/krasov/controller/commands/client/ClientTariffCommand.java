@@ -1,4 +1,4 @@
-package ua.khpi.krasov.controller.commands;
+package ua.khpi.krasov.controller.commands.client;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import ua.khpi.krasov.controller.Path;
+import ua.khpi.krasov.controller.commands.Command;
 import ua.khpi.krasov.db.dao.OrderDao;
 import ua.khpi.krasov.db.dao.ServiceDao;
 import ua.khpi.krasov.db.dao.ServiceTariffsDao;
@@ -34,6 +35,16 @@ public class ClientTariffCommand implements Command {
 		log.debug("Client tariff command starts");
 
 		HttpSession session = request.getSession();
+		
+		User user = (User) session.getAttribute("user");
+		user = new UserDao().getUserByLogin(user.getLogin());
+		session.setAttribute("user", user);
+		session.setAttribute("status", Status.getStatus(user).getName());
+		log.trace("User refreshed is session.");
+		
+		// error handler
+		String errorMessage = null;
+		String forward = Path.ERROR_PAGE;
 
 		String serviceName = request.getParameter("serviceName");
 		log.trace("Selected service ==> " + serviceName);
@@ -51,10 +62,18 @@ public class ClientTariffCommand implements Command {
 		if (orderParam != null) {
 			log.debug("Order selected.");
 			
+			Status status = Status.getStatus(user);
+			
+			if(!status.equals(Status.CONFIRMED)){
+				log.error("User is not confirmed/blocked");
+				errorMessage = "Yor account is not confirmed/blocked";
+				request.setAttribute("errorMessage", errorMessage);
+				return forward;
+			}
+			
 			service = (Service) session.getAttribute("service");
 			log.trace("Attribute was found in session with value ==>" + service);
 
-			User user = (User) session.getAttribute("user");
 			
 			String tariffName = request.getParameter("tariffName");
 			log.trace("Selected tariff ==> " + tariffName);
@@ -83,20 +102,10 @@ public class ClientTariffCommand implements Command {
 			log.trace("Tariff price ==> " + price);
 			
 			//checking if service is unique in order list
-			boolean uniqueService = true;
 			List<Order> orders = orderDao.getOrdersByUser(user);
 			log.trace("User's orders obtained == > " + orders);
 			
-			for (int i = 0; i < orders.size(); i++) {
-				if(orders.get(i).getServiceId() == order.getServiceId()) {
-					uniqueService = false;
-					break;
-				}
-			}
-			log.trace("Service in order is not unique");
-			
-			
-			if(ValidationUtil.validateOrder(order, orderDao) && uniqueService) {
+			if(orders.isEmpty() || ValidationUtil.validateOrder(order, orderDao)) {
 				if(bill >= price) {
 					bill = bill - price;
 					user.setBill(bill);
@@ -113,6 +122,7 @@ public class ClientTariffCommand implements Command {
 				log.trace("Redirecting to " + redirect);
 				response.sendRedirect(redirect);
 			}else {
+				log.trace("Service in order is not unique");
 				redirect += "&completed=false";
 				log.trace("Order was NOT added in DB ==>" + order);
 				log.trace("Redirecting to " + redirect);

@@ -1,4 +1,4 @@
-package ua.khpi.krasov.controller.commands;
+package ua.khpi.krasov.controller.commands.client;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import ua.khpi.krasov.controller.Path;
+import ua.khpi.krasov.controller.commands.Command;
 import ua.khpi.krasov.db.Status;
 import ua.khpi.krasov.db.dao.OrderDao;
 import ua.khpi.krasov.db.dao.TariffDao;
@@ -27,6 +28,12 @@ public class BillRefillCommand implements Command {
 		log.trace("Bill Refill Command starts");
 		
 		HttpSession session = request.getSession();
+		
+		User user = (User) session.getAttribute("user");
+		user = new UserDao().getUserByLogin(user.getLogin());
+		session.setAttribute("user", user);
+		session.setAttribute("status", Status.getStatus(user).getName());
+		log.trace("User refreshed is session.");
 
 		String sum = request.getParameter("summ");
 		
@@ -34,15 +41,15 @@ public class BillRefillCommand implements Command {
 		String completed = (String) session.getAttribute("completed");
 		//PRG pattern
 		
+		// error handler
+		String errorMessage = null;
+		String forward = Path.ERROR_PAGE;
+		
 		log.trace("Summ == > " + sum);
 
 		if (sum != null && completed == null) {
 			int summInt = 0;
 
-			// error handler
-			String errorMessage = null;
-			String forward = Path.ERROR_PAGE;
-			
 			//Checking if sum contains "-"
 			if(sum.contains("-")) {
 				log.error("Sum contains \"-\"");
@@ -60,8 +67,15 @@ public class BillRefillCommand implements Command {
 				request.setAttribute("errorMessage", errorMessage);
 				return forward;
 			}
-
-			User user = (User) session.getAttribute("user");
+			
+			Status status = Status.getStatus(user);
+			
+			if(!status.equals(Status.CONFIRMED)){
+				log.error("User is not confirmed/blocked");
+				errorMessage = "Yor account is not confirmed/blocked";
+				request.setAttribute("errorMessage", errorMessage);
+				return forward;
+			}
 
 			user.setBill(user.getBill() + summInt);
 			log.trace("New value of user's bill is " + user.getBill());

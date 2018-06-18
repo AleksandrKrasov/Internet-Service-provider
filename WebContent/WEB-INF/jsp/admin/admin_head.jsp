@@ -13,35 +13,17 @@
 	<div class="head">	
 		<fieldset>
 			<c:set var="login" value="${sessionScope.user.login}"/>
-			<c:set var="bill" value="${sessionScope.user.bill}"/>
-			<c:set var="status" value="${sessionScope.status}"/>
 			
 			<c:if test="${not empty login}">
 				Login: <b>${login} | </b>
 			</c:if>	
-			
-			<c:if test="${not empty login}">
-				Bill: <b>${bill} | </b>
-			</c:if>
-			
-			<c:if test="${not empty status}">
-				Status: <b>${status}</b>
-			</c:if>
+				<b>ADMINISTRATOR</b>
+				
 			<div class="logout" align="right">
 			
 				<form class="login-form" action="Controller" method="get">
-    				<input type="hidden" name="command" value="clientOrders"/>
-      				<button>My orders</button>
-    			</form>
-			
-				<form class="login-form" action="Controller" method="get">
-    				<input type="hidden" name="command" value="clientServices"/>
-      				<button>services</button>
-    			</form>
-			
-				<form class="login-form" action="Controller" method="get">
-    				<input type="hidden" name="command" value="billRefill"/>
-      				<button>Refill bill</button>
+    				<input type="hidden" name="command" value="clientList"/>
+      				<button>clients</button>
     			</form>
     			
     			<form class="login-form" action="Controller" method="get">

@@ -17,6 +17,8 @@ public class UserDao implements UserDaoInterface{
 
 	private String SQL_SELECT_ALL_USERS = "SELECT * FROM users";
 	
+	private String SQL_SELECT_ALL_CLIENTS = "SELECT * FROM users WHERE role_id=1";
+	
 	private String SQL_INSERT_USER = "INSERT INTO users VALUES (DEFAULT, ?, ?, ?, ?, DEFAULT, ?, DEFAULT)";
 	
 	private String SQL_UPDATE_LOGIN = "UPDATE users SET login=? WHERE id=?";
@@ -261,7 +263,7 @@ public class UserDao implements UserDaoInterface{
 
 
 	@Override
-	public boolean deleteUser(User user) {
+	public boolean deleteUserByLogin(String login) {
 		boolean res = false;
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -270,7 +272,7 @@ public class UserDao implements UserDaoInterface{
 			con = DBManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_DELETE_USER);
 			int k = 1;
-			pstmt.setString(k++, user.getLogin());
+			pstmt.setString(k++, login);
 			res = pstmt.executeUpdate() > 0;
 		} catch (SQLException ex) {
 			ex.printStackTrace();
@@ -339,6 +341,37 @@ public class UserDao implements UserDaoInterface{
 			}
 		}
 		return false;
+	}
+
+
+	@Override
+	public List<User> getAllClients() {
+		List<User> users = new ArrayList<>();
+		
+		Connection con = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			con = DBManager.getInstance().getConnection();
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(SQL_SELECT_ALL_CLIENTS);
+			while (rs.next()) {
+				User user = extractUser(rs);
+				users.add(user);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				rs.close();
+				stmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return users;
 	}
 
 }
