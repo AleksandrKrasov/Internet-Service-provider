@@ -18,6 +18,7 @@
 				<th>Tariff</th>
 				<th>Description</th>
 				<th>Price</th>
+				<th></th>
 			</tr>
 			<c:forEach items="${tariffs}" var="i">
 				<tr>

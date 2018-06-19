@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="t" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -21,13 +22,24 @@
 			</c:if>	
 			
 			<c:if test="${not empty login}">
-				Bill: <b>${bill} | </b>
+				Bill: <b><t:colerfulBill value="${bill}">
+     				<jsp:attribute name="even_fragment">
+         				<span style="color: black;">${i}</span>
+     				</jsp:attribute>
+     				<jsp:attribute name="odd_fragment">
+         			<span style="color: red;">${i}</span>
+     				</jsp:attribute>
+ 					</t:colerfulBill> | </b>
 			</c:if>
 			
 			<c:if test="${not empty status}">
 				Status: <b>${status}</b>
 			</c:if>
 			<div class="logout" align="right">
+			
+				<form class="login-form" action="PdfDownloader" method="get">
+      				<button >download tariff plans</button>
+    			</form>
 			
 				<form class="login-form" action="Controller" method="get">
     				<input type="hidden" name="command" value="clientOrders"/>

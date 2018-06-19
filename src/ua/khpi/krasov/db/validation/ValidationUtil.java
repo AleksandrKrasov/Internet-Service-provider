@@ -1,10 +1,11 @@
 package ua.khpi.krasov.db.validation;
 
 import java.util.List;
-
 import ua.khpi.krasov.db.dao.interfaces.OrderDaoInterface;
+import ua.khpi.krasov.db.dao.interfaces.ServiceDaoInterface;
 import ua.khpi.krasov.db.dao.interfaces.UserDaoInterface;
 import ua.khpi.krasov.db.entity.Order;
+import ua.khpi.krasov.db.entity.Service;
 import ua.khpi.krasov.db.entity.User;
 
 public class ValidationUtil {
@@ -36,6 +37,17 @@ public class ValidationUtil {
 					list.get(i).getUserId() == order.getUserId()) {
 				return false;
 			}
+		}
+		return true;
+	}
+	
+	public static boolean validateService(Service service, ServiceDaoInterface serviceDao) {
+		if(service.getName().length() > 20)
+			return false;
+		List<Service> services = serviceDao.getAllServices();
+		for(Service ser : services) {
+			if(ser.getName().equals(service.getName()))
+				return false;
 		}
 		return true;
 	}

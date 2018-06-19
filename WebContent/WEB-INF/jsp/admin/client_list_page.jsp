@@ -24,6 +24,7 @@
 				<th>Bill</th>
 				<th>Status</th>
 				<th>Change status</th>
+				<th></th>
 			</tr>
 			<c:forEach begin="0" end="${clientList.size() - 1}" var="i">
 				<tr>

@@ -27,6 +27,11 @@
     			</form>
     			
     			<form class="login-form" action="Controller" method="get">
+    				<input type="hidden" name="command" value="adminServices"/>
+      				<button>services</button>
+    			</form>
+    			
+    			<form class="login-form" action="Controller" method="get">
     				<input type="hidden" name="command" value="settings"/>
       				<button>settings</button>
     			</form>

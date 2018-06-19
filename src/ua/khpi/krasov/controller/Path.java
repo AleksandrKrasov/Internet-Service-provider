@@ -38,4 +38,11 @@ public class Path {
 	
 	public static final String CLIENT_LIST_REDIRECT_PAGE = "http://localhost:8080/FinalTask/Controller?command=clientList";
 	
+	public static final String ADMIN_SERVICE_PAGE = "/WEB-INF/jsp/admin/admin_services_page.jsp";
+	
+	public static final String ADD_SERVICE_PAGE = "/WEB-INF/jsp/admin/add_service_page.jsp";
+	
+	public static final String ADMIN_SERVICE_REDIRECT_PAGE = "http://localhost:8080/FinalTask/Controller?command=adminServices&completed=true";
+
+	
 }
