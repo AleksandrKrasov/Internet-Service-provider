@@ -1,6 +1,7 @@
 package ua.khpi.krasov.controller.commands;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,40 +36,47 @@ public class RegistrationCommand implements Command {
 		// error handler
 		String errorMessage = null;		
 		String forward = Path.ERROR_PAGE;
+		ResourceBundle bundle = ResourceBundle.getBundle("resources", request.getLocale());
 		
 		if(login == null || password == null || repeatPassword == null || 
 				firstName == null || lastName == null || login.isEmpty() ||
 				password.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
-			errorMessage = "Any fields can not be empty.";
+			errorMessage = bundle.getString("error.emptyFields");
 			request.setAttribute("errorMessage", errorMessage);
 			log.warn("Any fields can not be empty.");
 			return forward;
 		}
 		
 		if(user != null) {
-			errorMessage = "User with such login already exists.";
+			errorMessage = bundle.getString("error.userExists");
 			request.setAttribute("errorMessage", errorMessage);
 			log.warn("User with such login already exists.");
 			return forward;
 		}
 		
 		if(!password.equals(repeatPassword)) {
-			errorMessage = "Password does not equals repeated password.";
+			errorMessage = bundle.getString("error.wrongPassword");
 			request.setAttribute("errorMessage", errorMessage);
 			log.warn("Password does not equals repeated password.");
 			return forward;
 		}
 		
 		user = new User();
-		user.setLogin(login);
-		user.setPassword(password);
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
+		user.setLogin(login.trim());
+		user.setPassword(password.trim());
+		user.setFirstName(firstName.trim());
+		user.setLastName(lastName.trim());
 		user.setRoleId(1);
 		
 		if(!ValidationUtil.validateUser(user, userDao)) {
-			errorMessage = "Invalid user.";
+			errorMessage = bundle.getString("error.message");
+			String loginMessage = bundle.getString("error.message.login");
+			String passwordMessage = bundle.getString("error.message.password");
+			String nameMessage = bundle.getString("error.message.name");
 			request.setAttribute("errorMessage", errorMessage);
+			request.setAttribute("loginMessage", loginMessage);
+			request.setAttribute("passwordMessage", passwordMessage);
+			request.setAttribute("nameMessage", nameMessage);
 			log.warn("Invalid user.");
 			return Path.ERROR_PAGE;
 		}

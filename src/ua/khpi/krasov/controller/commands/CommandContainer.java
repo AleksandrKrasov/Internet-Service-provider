@@ -8,7 +8,11 @@ import org.apache.log4j.Logger;
 import ua.khpi.krasov.controller.commands.admin.AddServiceCommand;
 import ua.khpi.krasov.controller.commands.admin.AdminCommand;
 import ua.khpi.krasov.controller.commands.admin.AdminServiceCommand;
+import ua.khpi.krasov.controller.commands.admin.AdminTariffCommand;
+import ua.khpi.krasov.controller.commands.admin.ChangeTariffCommand;
 import ua.khpi.krasov.controller.commands.admin.ClientListCommand;
+import ua.khpi.krasov.controller.commands.admin.ServiceRanameCommand;
+import ua.khpi.krasov.controller.commands.admin.TariffAddCommand;
 import ua.khpi.krasov.controller.commands.client.BillRefillCommand;
 import ua.khpi.krasov.controller.commands.client.ClientCommand;
 import ua.khpi.krasov.controller.commands.client.ClientOrderCommand;
@@ -37,6 +41,10 @@ public class CommandContainer {
 		commands.put("clientList", new ClientListCommand());
 		commands.put("adminServices", new AdminServiceCommand());
 		commands.put("addService", new AddServiceCommand());
+		commands.put("adminTariffs", new AdminTariffCommand());
+		commands.put("renameService", new ServiceRanameCommand());
+		commands.put("addTariff", new TariffAddCommand());
+		commands.put("changeTariff", new ChangeTariffCommand());
 		
 		log.debug("Command container was successfully initialized");
 		log.trace("Number of commands --> " + commands.size());

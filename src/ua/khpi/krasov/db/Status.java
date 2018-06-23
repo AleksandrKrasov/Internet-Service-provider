@@ -24,4 +24,18 @@ public enum Status {
 	public String getName() {
 		return name().toLowerCase();
 	}
+	
+	public String getNameRu() {
+		if(name().equals(OPENED.name()))
+			return "Неподтвержден";
+		if(name().equals(CONFIRMED.name()))
+			return "Подтвержден";
+		if(name().equals(BLOCKED.name()))
+			return "Заблокирован";
+		if(name().equals(PAID.name()))
+			return "Оплачено";
+		if(name().equals(UNPAID.name()))
+			return "Не оплачено";
+		return name().toLowerCase();
+	}
 }

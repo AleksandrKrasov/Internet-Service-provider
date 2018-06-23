@@ -18,7 +18,11 @@ public interface TariffDaoInterface {
 	
 	boolean updateName(Tariff tariff);
 	
+	boolean updateNameRu(Tariff tariff);
+	
 	boolean updateDescription(Tariff tariff);
+	
+	boolean updateDescriptionRu(Tariff tariff);
 	
 	boolean updatePrice(Tariff tariff);
 	

@@ -3,16 +3,19 @@ package ua.khpi.krasov.controller.commands;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import javax.servlet.jsp.jstl.core.Config;
 import org.apache.log4j.Logger;
-
 import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.db.DBManager;
+import ua.khpi.krasov.db.Language;
+import ua.khpi.krasov.db.Status;
 import ua.khpi.krasov.db.dao.UserDao;
 import ua.khpi.krasov.db.dao.interfaces.UserDaoInterface;
 import ua.khpi.krasov.db.entity.User;
@@ -34,9 +37,11 @@ public class SettingsCommand implements Command {
 			HttpSession session = request.getSession();
 
 			User user = (User) session.getAttribute("user");
-
+			
+			Connection conn = null;
+			
 			try {
-				Connection conn = DBManager.getInstance().getConnection();
+				conn = DBManager.getInstance().getConnection();
 				conn.setAutoCommit(false);
 
 				String login = request.getParameter("login");
@@ -44,14 +49,46 @@ public class SettingsCommand implements Command {
 				String repeatPassword = request.getParameter("repeatPassword");
 				String firstName = request.getParameter("firstName");
 				String LastName = request.getParameter("lastName");
+				String language = request.getParameter("language");
 				
 				String errorMessage = null;		
 				String forward = Path.ERROR_PAGE;
+				
+				Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
+				if(locale == null) {
+					locale = new Locale("ru");
+					Config.set( session, Config.FMT_LOCALE, locale);
+				}
+				
+				ResourceBundle bundle = ResourceBundle.getBundle("resources", (Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
 				
 				String userLogin = user.getLogin();
 				String userPassword = user.getPassword();
 				String userFirstName = user.getFirstName();
 				String userLastName = user.getLastName();
+				
+				if(language != null) {
+					locale = new Locale(language);
+					Config.set( session, Config.FMT_LOCALE, locale);
+					
+					Language lang = Language.getLanguage(locale);
+					
+					Status status = Status.getStatus(user);
+					log.trace("userStatus --> " + status);
+					
+					if(lang.equals(Language.RU)) {
+						log.trace("Language ==> " + Language.RU);
+						session.setAttribute("status", status.getNameRu());
+						log.trace("Set the session attribute: status --> " + status);
+					}
+					
+					if(lang.equals(Language.EN)) {
+						log.trace("Language ==> " + Language.EN);
+						session.setAttribute("status", status.getName());
+						log.trace("Set the session attribute: status --> " + status);
+					}
+					log.trace("Language changed to ==> " + language);
+				}
 
 				if (login != null && !login.isEmpty()) {
 					user.setLogin(login);
@@ -59,7 +96,7 @@ public class SettingsCommand implements Command {
 						userDao.updateLogin(user);
 						log.trace("Login was successfuly updated in DB.");
 					} else {
-						errorMessage = "Login is incorrect/such login already exists.";
+						errorMessage = bundle.getString("error.settings.wronLogin");
 						request.setAttribute("errorMessage", errorMessage);
 						log.warn(errorMessage);
 						conn.rollback();
@@ -69,16 +106,18 @@ public class SettingsCommand implements Command {
 					}
 				}
 				
-				if (password != null && !password.isEmpty() && repeatPassword != null && !repeatPassword.isEmpty()
-						&& password.equals(repeatPassword)) {
+				if (password != null && !password.isEmpty() && repeatPassword != null && !repeatPassword.isEmpty()) {
+					log.debug("Changing password starts.");
 					user.setPassword(password);
-					if (ValidationUtil.validateUser(user)) {
+					if (ValidationUtil.validateUser(user) && password.equals(repeatPassword)) {
 						userDao.updatePassword(user);
 						log.trace("Password was successfuly updated in DB.");
 					} else {
-						errorMessage = "Password is incorrect";
+						errorMessage = bundle.getString("error.settings.password");
+						String passwordMessage = bundle.getString("error.message.password");
 						request.setAttribute("errorMessage", errorMessage);
-						log.warn(errorMessage);
+						request.setAttribute("passwordMessage", passwordMessage);
+						log.warn("Password is incorrect");
 						conn.rollback();
 						log.trace("Rollback changes in DB.");
 						user.setPassword(userPassword);
@@ -89,12 +128,12 @@ public class SettingsCommand implements Command {
 				if (firstName != null && !firstName.isEmpty()) {
 					user.setFirstName(firstName);
 					if (ValidationUtil.validateUser(user)) {
-						userDao.updatePassword(user);
+						userDao.updateFirstName(user);
 						log.trace("First name was successfuly updated in DB.");
 					} else {
-						errorMessage = "First name is incorrect";
+						errorMessage = bundle.getString("error.settings.firstName");
 						request.setAttribute("errorMessage", errorMessage);
-						log.warn(errorMessage);
+						log.warn("First name is incorrect");
 						conn.rollback();
 						log.trace("Rollback changes in DB.");
 						user.setFirstName(userFirstName);
@@ -103,14 +142,14 @@ public class SettingsCommand implements Command {
 				}
 
 				if (LastName != null && !LastName.isEmpty()) {
-					user.setFirstName(LastName);
+					user.setLastName(LastName);
 					if (ValidationUtil.validateUser(user)) {
-						userDao.updatePassword(user);
+						userDao.updateLastName(user);
 						log.trace("Last name was successfuly updated in DB.");
 					} else {
-						errorMessage = "Last name is incorrect";
+						errorMessage = bundle.getString("error.settings.lastName");
 						request.setAttribute("errorMessage", errorMessage);
-						log.warn(errorMessage);
+						log.warn("Last name is incorrect");
 						conn.rollback();
 						log.trace("Rollback changes in DB.");
 						user.setLastName(userLastName);
@@ -119,11 +158,18 @@ public class SettingsCommand implements Command {
 				}
 				
 				conn.commit();
-				conn.close();
 				log.trace("Changes are commited.");
 
 			} catch (SQLException e) {
 				log.error(e);
+			} finally {
+				try {
+					conn.setAutoCommit(true);
+					conn.close();
+					log.debug("Connection closed.");
+				} catch (SQLException e) {
+					log.error(e);
+				}
 			}
 
 			log.trace("Redirecting to ==> " + Path.SETTING_REDIRECT_PAGE);

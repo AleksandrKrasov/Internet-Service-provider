@@ -6,7 +6,7 @@ public class Path {
 	
 	public static final String REGISTRATION_PAGE = "/registration.jsp";
 	
-	public static final String SETTING_REDIRECT_PAGE = "http://localhost:8080/FinalTask/Controller?command=settings&saved=true";
+	public static final String SETTING_REDIRECT_PAGE = "http://localhost:8080/FinalTask/Controller?command=settings";
 	
 	public static final String ERROR_PAGE = "/WEB-INF/jsp/error_page.jsp";
 	
@@ -42,7 +42,23 @@ public class Path {
 	
 	public static final String ADD_SERVICE_PAGE = "/WEB-INF/jsp/admin/add_service_page.jsp";
 	
-	public static final String ADMIN_SERVICE_REDIRECT_PAGE = "http://localhost:8080/FinalTask/Controller?command=adminServices&completed=true";
+	public static final String ADMIN_SERVICE_REDIRECT_PAGE = "http://localhost:8080/FinalTask/Controller?command=adminServices";
 
+	public static final String ADMIN_TARIFF_PAGE = "/WEB-INF/jsp/admin/admin_tariffs_page.jsp";
 	
+	public static final String ADMIN_TARIFF_REFIRECT_PAGE = "http://localhost:8080/FinalTask/Controller?command=adminTariffs&completed=true";
+
+	public static final String SERVICE_RENAME_PAGE = "/WEB-INF/jsp/admin/service_rename_page.jsp";
+	
+	public static final String ADD_TATIFF_PAGE = "/WEB-INF/jsp/admin/add_tariff_page.jsp";
+	
+	public static final String ADMIN_SERVICE_TARIFFS_REDIRECT_PAGE = "http://localhost:8080/FinalTask/Controller?command=adminTariffs";
+	
+	public static final String CHANGE_TATIFF_PAGE = "/WEB-INF/jsp/admin/change_tariff_page.jsp";
+
+	public static final String FONT = "C:\\Windows\\Fonts\\ARIAL.TTF";
+
+
+
+
 }

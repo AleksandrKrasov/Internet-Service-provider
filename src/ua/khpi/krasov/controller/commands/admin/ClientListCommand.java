@@ -3,13 +3,17 @@ package ua.khpi.krasov.controller.commands.admin;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.jstl.core.Config;
+
 import org.apache.log4j.Logger;
 import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.controller.commands.Command;
+import ua.khpi.krasov.db.Language;
 import ua.khpi.krasov.db.Status;
 import ua.khpi.krasov.db.dao.UserDao;
 import ua.khpi.krasov.db.dao.interfaces.UserDaoInterface;
@@ -25,7 +29,6 @@ public class ClientListCommand implements Command {
 		log.debug("Client list command starts");
 		
 		UserDaoInterface userDao = new UserDao();
-		HttpSession session = request.getSession();
 		
 		String clientLogin = (String) request.getParameter("clientLogin");
 		String delete = (String) request.getParameter("delete");
@@ -55,7 +58,7 @@ public class ClientListCommand implements Command {
 				user.setStatus_id(Status.CONFIRMED.getStatusId());
 			
 			userDao.updateStatus(user);
-			log.trace("User status changed in DB to==> " + changeStatus);
+			log.trace("User status changed in DB to ==> " + changeStatus);
 			
 			String redirect = Path.CLIENT_LIST_REDIRECT_PAGE;
 			response.sendRedirect(redirect);
@@ -64,24 +67,41 @@ public class ClientListCommand implements Command {
 		
 		List<User> clientList = userDao.getAllClients();
 		List<String> statusNames = new ArrayList<>();
+		List<String> radioStatusNames = new ArrayList<>();
 		
-		session.setAttribute("clientList", clientList);
+		request.setAttribute("clientList", clientList);
 		log.trace("Attribute was added to session with name (clients)");
 		
-		session.setAttribute("status", Status.values());
+		request.setAttribute("status", Status.values());
+		
+		Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
+		Language lang = Language.getLanguage(locale);
+		
+		if(lang.equals(Language.RU)) {
+			radioStatusNames.add(Status.CONFIRMED.getNameRu());
+			radioStatusNames.add(Status.BLOCKED.getNameRu());
+			log.trace("Language ==> " + Language.RU);
+			for (int i = 0; i < clientList.size(); i++) {
+				statusNames.add(Status.getStatus(clientList.get(i)).getNameRu());
+			}
+		}
+		
+		if(lang.equals(Language.EN)) {
+			radioStatusNames.add(Status.CONFIRMED.getName());
+			radioStatusNames.add(Status.BLOCKED.getName());
+			log.trace("Language ==> " + Language.EN);
+			for (int i = 0; i < clientList.size(); i++) {
+				statusNames.add(Status.getStatus(clientList.get(i)).getName());
+			}
+		}
 		
 		for (int i = 0; i < clientList.size(); i++) {
 			statusNames.add(Status.getStatus(clientList.get(i)).getName());
 		}
 		
-		session.setAttribute("statusNames", statusNames);
-		log.trace("Attribute was added to session with name (statusNames)");
-		
-		
-		
-		
-
-		
+		request.setAttribute("statusNames", statusNames);
+		request.setAttribute("radioStatusNames", radioStatusNames);
+		log.trace("Attribute was added to requset with name (statusNames)");
 		
 		return Path.CLIENT_LIST_PAGE;
 	}

@@ -1,15 +1,18 @@
 package ua.khpi.krasov.controller.commands;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.jstl.core.Config;
 
 import org.apache.log4j.Logger;
-
 import ua.khpi.krasov.controller.Path;
+import ua.khpi.krasov.db.Language;
 import ua.khpi.krasov.db.Role;
 import ua.khpi.krasov.db.Status;
 import ua.khpi.krasov.db.dao.UserDao;
@@ -33,28 +36,31 @@ public class LoginCommand implements Command{
 		// error handler
 		String errorMessage = null;		
 		String forward = Path.ERROR_PAGE;
+		ResourceBundle bundle = ResourceBundle.getBundle("resources", request.getLocale());
 		
 		HttpSession session = request.getSession();
 		
+		Config.set( session, Config.FMT_LOCALE, request.getLocale());
+		
 		if(session.getAttribute("user") != null) {
-			errorMessage = "You have already loged in as " + ((User)session.getAttribute("user")).getLogin();
+			errorMessage = bundle.getString("error.repeatedLogin") + " " + ((User)session.getAttribute("user")).getLogin();
 			request.setAttribute("errorMessage", errorMessage);
 			log.warn("User already loged in.");
 			return forward;
 		}
 		
 		if (login == null || password == null || login.isEmpty() || password.isEmpty()) {
-			errorMessage = "Login/password cannot be empty";
+			errorMessage = bundle.getString("error.password");
 			request.setAttribute("errorMessage", errorMessage);
 			log.error("errorMessage --> " + errorMessage);
 			return forward;
 		}
 		
-		User user = new UserDao().getUserByLogin(login);
+		User user = new UserDao().getUserByLogin(login.trim());
 		log.trace("Found in DB: user --> " + user);
 		
-		if (user == null || !password.equals(user.getPassword())) {
-			errorMessage = "Cannot find user with such login/password";
+		if (user == null || !password.trim().equals(user.getPassword().trim())) {
+			errorMessage = bundle.getString("error.cannotFindUser");
 			request.setAttribute("errorMessage", errorMessage);
 			log.error("errorMessage --> " + errorMessage);
 			return forward;
@@ -69,8 +75,21 @@ public class LoginCommand implements Command{
 		Status status = Status.getStatus(user);
 		log.trace("userStatus --> " + status);
 		
-		session.setAttribute("status", status.getName());
-		log.trace("Set the session attribute: status --> " + status);
+		Locale locale = request.getLocale();
+		Language lang = Language.getLanguage(locale);
+		
+		if(lang.equals(Language.RU)) {
+			log.trace("Language ==> " + Language.RU);
+			session.setAttribute("status", status.getNameRu());
+			log.trace("Set the session attribute: status --> " + status);
+		}
+		
+		if(lang.equals(Language.EN)) {
+			log.trace("Language ==> " + Language.EN);
+			session.setAttribute("status", status.getName());
+			log.trace("Set the session attribute: status --> " + status);
+		}
+		
 		
 		if(role.equals(Role.ADMIN)) {
 			log.trace("User as admin.");

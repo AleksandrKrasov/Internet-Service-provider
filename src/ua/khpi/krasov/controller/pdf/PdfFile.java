@@ -6,21 +6,25 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
+
 import org.apache.log4j.Logger;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chapter;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Section;
-import com.itextpdf.text.pdf.CMYKColor;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.db.dao.ServiceDao;
 import ua.khpi.krasov.db.dao.ServiceTariffsDao;
 import ua.khpi.krasov.db.dao.TariffDao;
@@ -34,10 +38,14 @@ public class PdfFile {
 	private static final Logger log = Logger.getLogger(PdfFile.class);
 	
 	private String root;
+	
+	private ResourceBundle bundle;
 
-	public PdfFile(String root) {
+	public PdfFile(String root, ResourceBundle bundle) {
 		this.root = root;
+		this.bundle = bundle;
 		log.trace("Value for the field root ==> " + root);
+		log.trace("Value for the field bundle ==> " + bundle);
 	}
 
 	public void getPdfFile() throws DocumentException, MalformedURLException, IOException {
@@ -50,6 +58,10 @@ public class PdfFile {
 		
 		TariffDaoInterface tariffDao = new TariffDao();
 		
+		BaseFont bf = BaseFont.createFont(Path.FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+		Font font = new Font(bf);
+		font.setColor(BaseColor.RED);
+		
 		// Instantiation of document object
 		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 
@@ -57,15 +69,18 @@ public class PdfFile {
 		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(root));
 
 		document.open();
+		writer.setLanguage("ru");
 		log.trace("Document opend.");
 		
-		Paragraph title = new Paragraph("Internt Service Provider",
-				FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLDITALIC, new CMYKColor(0, 255, 255, 17)));
-
+		Paragraph title = new Paragraph(bundle.getString("service.pdf.name"), font);
+		title.setAlignment(Element.ALIGN_CENTER);
+		
+		
 		Chapter chapter = new Chapter(title, 1);
 		chapter.setNumberDepth(0);
 
 		for (int i = 0; i < services.size(); i++) {
+			font.setColor(BaseColor.RED);
 			
 			List<Integer> tariffIds = serviceTariffsDao.getAllIdByServiceId(services.get(i));
 			List<Tariff> tariffs = new ArrayList<>();
@@ -77,8 +92,7 @@ public class PdfFile {
 			
 			log.trace("Tariffs were obtained from DB, amount ==> " + tariffs.size());
 			
-			Paragraph title1 = new Paragraph(services.get(i).getName(),
-					FontFactory.getFont(FontFactory.HELVETICA, 16, Font.BOLD, new CMYKColor(0, 255, 255, 17)));
+			Paragraph title1 = new Paragraph(services.get(i).getName(), font);
 			Section section = chapter.addSection(title1);
 
 			// Listing 6. Creation of table object
@@ -86,13 +100,13 @@ public class PdfFile {
 
 			t.setSpacingBefore(25);
 			t.setSpacingAfter(25);
-			Font font = new Font();
-			font.setStyle(Font.BOLD);
-			font.setSize(16);
-			font.setColor(BaseColor.GREEN);
-			Phrase phrase1 = new Phrase("Tariff", font);
-			Phrase phrase2 = new Phrase("Description", font);
-			Phrase phrase3 = new Phrase("Price", font);
+			Font font1 = new Font(bf);
+			font1.setStyle(Font.BOLD);
+			font1.setSize(16);
+			font1.setColor(BaseColor.GREEN);
+			Phrase phrase1 = new Phrase(bundle.getString("tariff.tariff"), font1);
+			Phrase phrase2 = new Phrase(bundle.getString("tariff.description"), font1);
+			Phrase phrase3 = new Phrase(bundle.getString("tariff.price"), font1);
 			PdfPCell c1 = new PdfPCell(phrase1);
 			t.addCell(c1);
 			PdfPCell c2 = new PdfPCell(phrase2);
@@ -100,10 +114,17 @@ public class PdfFile {
 			PdfPCell c3 = new PdfPCell(phrase3);
 			t.addCell(c3);
 			
+			font.setColor(BaseColor.BLACK);
+			
 			for(Tariff tariff : tariffs) {
-				t.addCell(tariff.getName());
-				t.addCell(tariff.getDescription());
-				t.addCell(String.valueOf(tariff.getPrice()));
+				
+				Phrase name = new Phrase(tariff.getName(), font);
+				Phrase description = new Phrase(tariff.getDescription(), font);
+				Phrase price = new Phrase(String.valueOf(tariff.getPrice()) + " " + bundle.getString("head.currency"), font);
+				
+				t.addCell(name);
+				t.addCell(description);
+				t.addCell(price);
 			}
 			section.add(t);
 			

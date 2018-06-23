@@ -15,13 +15,15 @@ public class ServiceDao implements ServiceDaoInterface {
 
 	private String SQL_SELECT_ALL_SERVICES = "SELECT * FROM services";
 
-	private String SQL_INSERT_SERVICE = "INSERT INTO services VALUES (DEFAULT, ?)";
+	private String SQL_INSERT_SERVICE = "INSERT INTO services VALUES (DEFAULT, ?, ?)";
 
 	private String SQL_FIND_SERVICE_BY_NAME = "SELECT * FROM services WHERE name=?";
 
 	private String SQL_FIND_SERVICE_BY_ID = "SELECT * FROM services WHERE id=?";
 
 	private String SQL_UPDATE_SERVICE = "UPDATE services SET name=? WHERE id=?";
+	
+	private String SQL_UPDATE_SERVICE_RU = "UPDATE services SET name_ru=? WHERE id=?";
 
 	private String SQL_DELETE_SERVICE = "DELETE FROM services WHERE name=?";
 
@@ -66,6 +68,7 @@ public class ServiceDao implements ServiceDaoInterface {
 			pstmt = con.prepareStatement(SQL_INSERT_SERVICE, Statement.RETURN_GENERATED_KEYS);
 			int k = 1;
 			pstmt.setString(k++, service.getName());
+			pstmt.setString(k++, service.getNameRu());
 			if (pstmt.executeUpdate() > 0) {
 				rs = pstmt.getGeneratedKeys();
 				if (rs.next()) {
@@ -92,6 +95,7 @@ public class ServiceDao implements ServiceDaoInterface {
 		Service service = new Service();
 		service.setId(rs.getInt("id"));
 		service.setName(rs.getString("name"));
+		service.setNameRu(rs.getString("name_ru"));
 		return service;
 	}
 
@@ -123,17 +127,17 @@ public class ServiceDao implements ServiceDaoInterface {
 		}
 		return null;
 	}
-
+	
 	@Override
-	public boolean updateService(Service service) {
+	public boolean updateNameRu(Service service) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 
 		try {
 			con = DBManager.getInstance().getConnection();
-			pstmt = con.prepareStatement(SQL_UPDATE_SERVICE);
+			pstmt = con.prepareStatement(SQL_UPDATE_SERVICE_RU);
 			int k = 1;
-			pstmt.setString(k++, service.getName());
+			pstmt.setString(k++, service.getNameRu());
 			pstmt.setInt(k++, service.getId());
 			if (pstmt.executeUpdate() > 0) {
 				return true;
@@ -143,6 +147,37 @@ public class ServiceDao implements ServiceDaoInterface {
 		} finally {
 			try {
 				pstmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean updateService(Service service) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+			con = DBManager.getInstance().getConnection();
+			con.setAutoCommit(false);
+			pstmt = con.prepareStatement(SQL_UPDATE_SERVICE);
+			int k = 1;
+			pstmt.setString(k++, service.getName());
+			pstmt.setInt(k++, service.getId());
+			if (pstmt.executeUpdate() > 0) {
+				con.commit();
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+				con.rollback();
+				con.setAutoCommit(true);
 				con.close();
 			} catch (SQLException e) {
 				e.printStackTrace();

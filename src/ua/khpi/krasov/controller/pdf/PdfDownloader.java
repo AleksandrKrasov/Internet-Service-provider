@@ -4,12 +4,17 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.jstl.core.Config;
+
 import org.apache.log4j.Logger;
 import com.itextpdf.text.DocumentException;
 
@@ -49,9 +54,12 @@ public class PdfDownloader extends HttpServlet {
 		File file = new File(path);
 	    ServletOutputStream outputStream = null;
 	    BufferedInputStream inputStream = null;
+	    
+	    Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
+	    ResourceBundle bundle = ResourceBundle.getBundle("resources", locale);
 	 	
 		try {
-			new PdfFile(path).getPdfFile();
+			new PdfFile(path, bundle).getPdfFile();
 	        outputStream = response.getOutputStream();
 	        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 	        log.trace("New header was set for response");

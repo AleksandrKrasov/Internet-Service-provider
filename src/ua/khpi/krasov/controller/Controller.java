@@ -42,7 +42,7 @@ public class Controller extends HttpServlet {
 	private void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		log.debug("Controller starts");
-
+		
 		// extract command name from the request
 		String commandName = request.getParameter("command");
 		log.trace("Request parameter: command --> " + commandName);

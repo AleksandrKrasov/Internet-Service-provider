@@ -9,6 +9,10 @@ public class Tariff extends Entity{
 	private int price;
 	
 	private String description;
+	
+	private String nameRu;
+	
+	private String descriptionRu;
 
 	public String getName() {
 		return name;
@@ -32,6 +36,22 @@ public class Tariff extends Entity{
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public String getNameRu() {
+		return nameRu;
+	}
+
+	public void setNameRu(String nameRu) {
+		this.nameRu = nameRu;
+	}
+
+	public String getDescriptionRu() {
+		return descriptionRu;
+	}
+
+	public void setDescriptionRu(String descriptionRu) {
+		this.descriptionRu = descriptionRu;
 	}
 
 	@Override

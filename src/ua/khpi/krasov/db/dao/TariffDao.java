@@ -15,11 +15,15 @@ public class TariffDao implements TariffDaoInterface {
 	
 	private String SQL_SELECT_ALL_TARIFFS = "SELECT * FROM tariffs";
 	
-	private String SQL_INSERT_TARIFF = "INSERT INTO tariffs VALUES (DEFAULT, ?, ?, ?)";
+	private String SQL_INSERT_TARIFF = "INSERT INTO tariffs VALUES (DEFAULT, ?, ?, ?, ?, ?)";
 	
 	private String SQL_UPDATE_NAME = "UPDATE tariffs SET name=? WHERE id=?";
 	
+	private String SQL_UPDATE_NAME_RU = "UPDATE tariffs SET name_ru=? WHERE id=?";
+	
 	private String SQL_UPDATE_DESCRIPTION = "UPDATE tariffs SET description=? WHERE id=?";
+	
+	private String SQL_UPDATE_DESCRIPTION_RU = "UPDATE tariffs SET description_ru=? WHERE id=?";
 	
 	private String SQL_UPDATE_PRICE = "UPDATE tariffs SET price=? WHERE id=?";
 	
@@ -73,6 +77,8 @@ public class TariffDao implements TariffDaoInterface {
 			pstmt.setString(k++, tariff.getName());
 			pstmt.setString(k++, tariff.getDescription());
 			pstmt.setInt(k++, tariff.getPrice());
+			pstmt.setString(k++, tariff.getNameRu());
+			pstmt.setString(k++, tariff.getDescriptionRu());
 			if (pstmt.executeUpdate() > 0) {
 				rs = pstmt.getGeneratedKeys();
 				if (rs.next()) {
@@ -101,6 +107,8 @@ public class TariffDao implements TariffDaoInterface {
 		tariff.setName(rs.getString("name"));
 		tariff.setDescription(rs.getString("description"));
 		tariff.setPrice(rs.getInt("price"));
+		tariff.setNameRu(rs.getString("name_ru"));
+		tariff.setDescriptionRu(rs.getString("description_ru"));
 		return tariff;
 	}
 
@@ -266,6 +274,60 @@ public class TariffDao implements TariffDaoInterface {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public boolean updateNameRu(Tariff tariff) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = DBManager.getInstance().getConnection();
+			pstmt = con.prepareStatement(SQL_UPDATE_NAME_RU);
+			int k = 1;
+			pstmt.setString(k++, tariff.getNameRu());
+			pstmt.setInt(k++, tariff.getId());
+			if (pstmt.executeUpdate() > 0) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean updateDescriptionRu(Tariff tariff) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = DBManager.getInstance().getConnection();
+			pstmt = con.prepareStatement(SQL_UPDATE_DESCRIPTION_RU);
+			int k = 1;
+			pstmt.setString(k++, tariff.getDescriptionRu());
+			pstmt.setInt(k++, tariff.getId());
+			if (pstmt.executeUpdate() > 0) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 	
 }

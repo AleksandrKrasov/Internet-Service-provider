@@ -19,5 +19,7 @@ public interface ServiceDaoInterface {
 	
 	boolean updateService(Service service);
 	
+	boolean updateNameRu(Service service);
+	
 	boolean deleteService(Service service);
 }

@@ -2,10 +2,15 @@ package ua.khpi.krasov.controller.commands.client;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.jstl.core.Config;
+
 import org.apache.log4j.Logger;
 import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.controller.commands.Command;
@@ -29,13 +34,18 @@ public class BillRefillCommand implements Command {
 		
 		HttpSession session = request.getSession();
 		
+		if(session.getAttribute("user") == null)
+			response.sendRedirect(Path.LOGIN_PAGE);
+		
 		User user = (User) session.getAttribute("user");
 		user = new UserDao().getUserByLogin(user.getLogin());
 		session.setAttribute("user", user);
 		session.setAttribute("status", Status.getStatus(user).getName());
-		log.trace("User refreshed is session.");
+		log.trace("User status id == > " + user.getStatus_id());
+		log.trace("Status refreshed in session.");
 
 		String sum = request.getParameter("summ");
+		
 		
 		//PRG pattern
 		String completed = (String) session.getAttribute("completed");
@@ -44,6 +54,7 @@ public class BillRefillCommand implements Command {
 		// error handler
 		String errorMessage = null;
 		String forward = Path.ERROR_PAGE;
+		ResourceBundle bundle = ResourceBundle.getBundle("resources", (Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
 		
 		log.trace("Summ == > " + sum);
 
@@ -53,7 +64,7 @@ public class BillRefillCommand implements Command {
 			//Checking if sum contains "-"
 			if(sum.contains("-")) {
 				log.error("Sum contains \"-\"");
-				errorMessage = "The sum can not contain \"-\"";
+				errorMessage = bundle.getString("error.bill.minus");
 				request.setAttribute("errorMessage", errorMessage);
 				return forward;
 			}
@@ -63,7 +74,7 @@ public class BillRefillCommand implements Command {
 				log.trace("Casting to int complited.");
 			} catch (Exception e) {
 				log.error("Can not cast to int", e);
-				errorMessage = "You must type only digital value";
+				errorMessage = bundle.getString("error.bill.digital");
 				request.setAttribute("errorMessage", errorMessage);
 				return forward;
 			}
@@ -72,7 +83,14 @@ public class BillRefillCommand implements Command {
 			
 			if(!status.equals(Status.CONFIRMED)){
 				log.error("User is not confirmed/blocked");
-				errorMessage = "Yor account is not confirmed/blocked";
+				errorMessage = bundle.getString("error.bill.blocked");
+				request.setAttribute("errorMessage", errorMessage);
+				return forward;
+			}
+			
+			if(user.getBill() + summInt > 1000000) {
+				log.error("Bill is to big.");
+				errorMessage = bundle.getString("error.bill.max");
 				request.setAttribute("errorMessage", errorMessage);
 				return forward;
 			}

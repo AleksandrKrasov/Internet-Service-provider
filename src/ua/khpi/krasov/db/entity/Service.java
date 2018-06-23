@@ -6,13 +6,22 @@ public class Service extends Entity{
 	
 	private String name;
 	
-
+	private String nameRu;
+	
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getNameRu() {
+		return nameRu;
+	}
+
+	public void setNameRu(String nameRu) {
+		this.nameRu = nameRu;
 	}
 
 	@Override
