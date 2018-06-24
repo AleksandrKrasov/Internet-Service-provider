@@ -34,6 +34,9 @@ public class TariffAddCommand implements Command {
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.debug("Tariff add command starts.");
+		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
 
 		String name = request.getParameter("name");
 		String price = request.getParameter("price");

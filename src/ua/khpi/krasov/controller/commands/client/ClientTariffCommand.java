@@ -41,10 +41,20 @@ public class ClientTariffCommand implements Command {
 
 		HttpSession session = request.getSession();
 		
+		if(session.getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
+		
 		User user = (User) session.getAttribute("user");
 		user = new UserDao().getUserByLogin(user.getLogin());
 		session.setAttribute("user", user);
-		session.setAttribute("status", Status.getStatus(user).getName());
+		
+		Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
+		Language lang = Language.getLanguage(locale);
+		
+		if(lang.equals(Language.RU)) {
+			session.setAttribute("status", Status.getStatus(user).getNameRu());
+		} else 
+			session.setAttribute("status", Status.getStatus(user).getName());
 		log.trace("User refreshed is session.");
 		
 		// error handler
@@ -71,8 +81,8 @@ public class ClientTariffCommand implements Command {
 			Status status = Status.getStatus(user);
 			
 			if(!status.equals(Status.CONFIRMED)){
-				log.error(bundle.getObject("error.bill.blocked"));
-				errorMessage = "Yor account is not confirmed/blocked";
+				log.error("Yor account is not confirmed/blocked");
+				errorMessage = bundle.getString("error.bill.blocked");
 				request.setAttribute("errorMessage", errorMessage);
 				return forward;
 			}
@@ -155,9 +165,6 @@ public class ClientTariffCommand implements Command {
 			log.debug("Finding tariffs finished, amount of tariffs ==> " + tariffs.size());
 			
 			String sortBy = request.getParameter("sortBy");
-			
-			Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
-			Language lang = Language.getLanguage(locale);
 			
 			if(sortBy != null) {
 				if(sortBy.equals("price")) {

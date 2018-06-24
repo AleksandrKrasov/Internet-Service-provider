@@ -29,7 +29,7 @@
 					<td>${tariffDesc[i]}</td>
 					<td>${tariffs[i].price} <fmt:message key="head.currency"/></td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="clientTariffs" /> <input
 								type="hidden" name="tariffName" value="${tariffs[i].name}" /> <input
 								type="hidden" name="order" value="true" />
@@ -40,7 +40,7 @@
 			</c:forEach>
 			<tr>
 				<td colspan="4">
-					<form class="login-form" action="Controller" method="get">
+					<form class="login-form" action="Controller" method="POST">
 						<input type="hidden" name="command" value="clientTariffs" />
 						<input type="hidden" name="serviceName" value="${serviceName}" />
 						<button><fmt:message key="tariff.sortBy"/></button>

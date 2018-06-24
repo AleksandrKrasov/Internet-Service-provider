@@ -40,27 +40,27 @@
       				<button ><fmt:message key="head.dtp"/></button>
     			</form>
 			
-				<form class="login-form" action="Controller" method="get">
+				<form class="login-form" action="Controller" method="POST">
     				<input type="hidden" name="command" value="clientOrders"/>
       				<button><fmt:message key="head.myOrders"/></button>
     			</form>
 			
-				<form class="login-form" action="Controller" method="get">
+				<form class="login-form" action="Controller" method="POST">
     				<input type="hidden" name="command" value="clientServices"/>
       				<button><fmt:message key="head.services"/></button>
     			</form>
 			
-				<form class="login-form" action="Controller" method="get">
+				<form class="login-form" action="Controller" method="POST">
     				<input type="hidden" name="command" value="billRefill"/>
       				<button><fmt:message key="head.refillBill"/></button>
     			</form>
     			
-    			<form class="login-form" action="Controller" method="get">
+    			<form class="login-form" action="Controller" method="POST">
     				<input type="hidden" name="command" value="settings"/>
       				<button><fmt:message key="head.settings"/></button>
     			</form>
     			
-    			<form class="login-form" action="Controller" method="get">
+    			<form class="login-form" action="Controller" method="POST">
     				<input type="hidden" name="command" value="logout"/>
       				<button><fmt:message key="head.logout"/></button>
     			</form>

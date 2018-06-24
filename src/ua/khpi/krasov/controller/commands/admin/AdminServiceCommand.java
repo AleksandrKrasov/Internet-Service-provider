@@ -28,6 +28,9 @@ public class AdminServiceCommand implements Command{
 			throws IOException, ServletException {
 		log.trace("Admin service command starts");
 		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
+		
 		ServiceDaoInterface serviceDao = new ServiceDao();
 		
 		String serviceName = request.getParameter("serviceName");

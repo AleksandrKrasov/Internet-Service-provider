@@ -28,6 +28,9 @@ public class ChangeTariffCommand implements Command {
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.debug("Change tariff command starts.");
+		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
 
 		String tariffName = request.getParameter("tariffName");
 		log.trace("Param value ==> " + tariffName);

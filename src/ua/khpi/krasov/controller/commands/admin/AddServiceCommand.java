@@ -27,6 +27,9 @@ public class AddServiceCommand implements Command {
 			throws IOException, ServletException {
 		log.debug("Add service command starts.");
 		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
+		
 		String nameRu = request.getParameter("nameRu");
 		String nameEn = request.getParameter("nameEn");
 		log.trace("Param value ru ==> " + nameRu);

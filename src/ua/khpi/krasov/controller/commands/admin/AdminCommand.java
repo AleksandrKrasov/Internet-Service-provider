@@ -21,6 +21,9 @@ public class AdminCommand implements Command {
 			throws IOException, ServletException {
 		log.debug("Admin command starts");
 		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
+		
 		return Path.ADMIN_PAGE;
 	}
 

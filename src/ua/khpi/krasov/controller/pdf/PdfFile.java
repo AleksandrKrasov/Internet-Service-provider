@@ -25,6 +25,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import ua.khpi.krasov.controller.Path;
+import ua.khpi.krasov.db.Language;
 import ua.khpi.krasov.db.dao.ServiceDao;
 import ua.khpi.krasov.db.dao.ServiceTariffsDao;
 import ua.khpi.krasov.db.dao.TariffDao;
@@ -75,6 +76,8 @@ public class PdfFile {
 		Paragraph title = new Paragraph(bundle.getString("service.pdf.name"), font);
 		title.setAlignment(Element.ALIGN_CENTER);
 		
+		Language lang = Language.getLanguage(bundle.getLocale());
+		
 		
 		Chapter chapter = new Chapter(title, 1);
 		chapter.setNumberDepth(0);
@@ -92,10 +95,17 @@ public class PdfFile {
 			
 			log.trace("Tariffs were obtained from DB, amount ==> " + tariffs.size());
 			
-			Paragraph title1 = new Paragraph(services.get(i).getName(), font);
+			Paragraph title1 = null;
+			
+			if(lang.equals(Language.EN))
+				title1 = new Paragraph(services.get(i).getName(), font);
+			else
+				title1 = new Paragraph(services.get(i).getNameRu(), font);
+			
+			
 			Section section = chapter.addSection(title1);
 
-			// Listing 6. Creation of table object
+			//Creation of table object
 			PdfPTable t = new PdfPTable(3);
 
 			t.setSpacingBefore(25);
@@ -117,10 +127,17 @@ public class PdfFile {
 			font.setColor(BaseColor.BLACK);
 			
 			for(Tariff tariff : tariffs) {
-				
-				Phrase name = new Phrase(tariff.getName(), font);
-				Phrase description = new Phrase(tariff.getDescription(), font);
+				Phrase name = null;
+				Phrase description = null;
 				Phrase price = new Phrase(String.valueOf(tariff.getPrice()) + " " + bundle.getString("head.currency"), font);
+				
+				if(lang.equals(Language.EN)) {
+					name = new Phrase(tariff.getName(), font);
+					description = new Phrase(tariff.getDescription(), font);
+				} else {
+					name = new Phrase(tariff.getNameRu(), font);
+					description = new Phrase(tariff.getDescriptionRu(), font);
+				}
 				
 				t.addCell(name);
 				t.addCell(description);

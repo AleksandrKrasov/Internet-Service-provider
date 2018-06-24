@@ -29,6 +29,9 @@ public class SettingsCommand implements Command {
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.debug("Settings command starts.");
+		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
 
 		if (request.getParameter("submit") != null) {
 

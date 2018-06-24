@@ -23,11 +23,11 @@ public class ServiceRanameCommand implements Command {
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.debug("Service rename command starts.");
+		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
 
 		String serviceName = request.getParameter("serviceName");
-		System.out.println(serviceName);
-
-		//HttpSession session = request.getSession();
 
 		String errorMessage = null;
 		String forward = Path.ERROR_PAGE;

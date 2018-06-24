@@ -11,7 +11,7 @@
 <body>
 	<div class="login-page">
 		<div class="form">
-			<form action="Controller" method="get" >
+			<form action="Controller" method="POST" >
 				<input type="hidden" name="command" value="registration"/>
 				<input type="text" name="login" placeholder="<fmt:message key="registration.login"/>">
 				<input type="password" name="password" placeholder="<fmt:message key="registration.password"/>">

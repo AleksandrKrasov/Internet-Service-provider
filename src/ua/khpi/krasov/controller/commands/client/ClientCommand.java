@@ -20,6 +20,9 @@ public class ClientCommand implements Command {
 			throws IOException, ServletException {
 		log.debug("Client command starts");
 		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
+		
 		return Path.CLIENT_PAGE;
 	}
 

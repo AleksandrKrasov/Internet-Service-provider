@@ -14,7 +14,7 @@
 	
 	<div class="login-page">
   		<div class="form">
-    		<form class="login-form" action="Controller" method="get">
+    		<form class="login-form" action="Controller" method="POST">
     			<input type="hidden" name="command" value="renameService"/>
     			<input type="hidden" name="serviceName" value="${serviceName}"/>
     			<input type="text" name="newNameEn" placeholder="<fmt:message key="service.nameEn"/>"/>

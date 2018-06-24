@@ -39,10 +39,21 @@ public class ClientOrderCommand implements Command {
 		
 		HttpSession session = request.getSession();
 		
+		
+		if(session.getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
+		
 		User user = (User) session.getAttribute("user");
 		user = new UserDao().getUserByLogin(user.getLogin());
 		session.setAttribute("user", user);
-		session.setAttribute("status", Status.getStatus(user).getName());
+		
+		Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
+		Language lang = Language.getLanguage(locale);
+		
+		if(lang.equals(Language.RU)) {
+			session.setAttribute("status", Status.getStatus(user).getNameRu());
+		} else 
+			session.setAttribute("status", Status.getStatus(user).getName());
 		log.trace("User refreshed is session.");
 		
 		OrderDaoInterface orderDao = new OrderDao();
@@ -99,9 +110,6 @@ public class ClientOrderCommand implements Command {
 		//getting order info
 		log.trace("Getting order's info starts");
 		log.trace("Amount of orders ==> " + orders.size());
-		
-		Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
-		Language lang = Language.getLanguage(locale);
 		
 		for (int i = 0; i < orders.size(); i++) {
 			

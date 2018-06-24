@@ -19,7 +19,7 @@
 
 	<div class="login-page">
   		<div class="form">
-    		<form class="login-form" action="Controller" method="get">
+    		<form class="login-form" action="Controller" method="POST">
     			<input type="hidden" name="command" value="login"/>
       			<input type="text" name="login" placeholder="<fmt:message key="login.login"/>"/>
       			<input type="password" name="password" placeholder="<fmt:message key="login.password"/>"/>

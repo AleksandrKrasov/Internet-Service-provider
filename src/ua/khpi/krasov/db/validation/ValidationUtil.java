@@ -44,6 +44,8 @@ public class ValidationUtil {
 	}
 	
 	public static boolean validateUser(User user) {
+		if(user == null)
+			return false;
 		if(!validatePassword(user.getPassword()))
 			return false;
 		if(!validateLogin(user.getLogin()))
@@ -93,14 +95,7 @@ public class ValidationUtil {
 			System.out.println(3);
 			return false;
 		}
-		/*List<Tariff> tariffs = new TariffDao().getAllTariffs();
-		for(Tariff tar : tariffs) {
-			if(tar.getName().equals(tariff.getName())) {
-				System.out.println(tar.getName() + " === " + tariff.getName());
-				return false;
-			}
-		}*/
-		if(!validateTariffName(tariff) || validateTariffNameRu(tariff)) {
+		if(!validateTariffName(tariff) || !validateTariffNameRu(tariff)) {
 			System.out.println(4);
 			return false;
 		}
@@ -152,7 +147,6 @@ public class ValidationUtil {
 		List<Tariff> tariffs = new TariffDao().getAllTariffs();
 		for(Tariff tar : tariffs) {
 			if(tar.getName().equals(tariff.getName())) {
-				System.out.println(tar.getName() + " === " + tariff.getName());
 				return false;
 			}
 		}
@@ -163,7 +157,6 @@ public class ValidationUtil {
 		List<Tariff> tariffs = new TariffDao().getAllTariffs();
 		for(Tariff tar : tariffs) {
 			if(tar.getNameRu().equals(tariff.getNameRu())) {
-				System.out.println(tar.getNameRu() + " === " + tariff.getNameRu());
 				return false;
 			}
 		}

@@ -20,22 +20,22 @@
 				
 			<div class="logout" align="right">
 			
-				<form class="login-form" action="Controller" method="get">
+				<form class="login-form" action="Controller" method="POST">
     				<input type="hidden" name="command" value="clientList"/>
       				<button><fmt:message key="head.clients"/></button>
     			</form>
     			
-    			<form class="login-form" action="Controller" method="get">
+    			<form class="login-form" action="Controller" method="POST">
     				<input type="hidden" name="command" value="adminServices"/>
       				<button><fmt:message key="head.services"/></button>
     			</form>
     			
-    			<form class="login-form" action="Controller" method="get">
+    			<form class="login-form" action="Controller" method="POST">
     				<input type="hidden" name="command" value="settings"/>
       				<button><fmt:message key="head.settings"/></button>
     			</form>
     			
-    			<form class="login-form" action="Controller" method="get">
+    			<form class="login-form" action="Controller" method="POST">
     				<input type="hidden" name="command" value="logout"/>
       				<button><fmt:message key="head.logout"/></button>
     			</form>

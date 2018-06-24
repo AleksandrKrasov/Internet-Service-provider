@@ -28,6 +28,9 @@ public class ClientListCommand implements Command {
 			throws IOException, ServletException {
 		log.debug("Client list command starts");
 		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
+		
 		UserDaoInterface userDao = new UserDao();
 		
 		String clientLogin = (String) request.getParameter("clientLogin");

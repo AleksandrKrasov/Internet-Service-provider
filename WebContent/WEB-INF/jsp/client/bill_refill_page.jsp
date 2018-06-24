@@ -15,7 +15,7 @@
 		<c:set var="message" value="${param['completed']}"/>
 		
   		<div class="form">
-    		<form class="login-form" action="Controller" method="get">
+    		<form class="login-form" action="Controller" method="POST">
     			<input type="hidden" name="command" value="billRefill"/>
       			<input type="text" name="summ" placeholder="<fmt:message key="refill.sum"/>"/>
       			<button><fmt:message key="refill.submit"/></button>

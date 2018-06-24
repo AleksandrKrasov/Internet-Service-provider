@@ -29,6 +29,9 @@ public class AdminTariffCommand implements Command {
 			throws IOException, ServletException {
 		log.debug("Admin tariff command starts.");
 		
+		if(request.getSession().getAttribute("user") == null)
+			return Path.LOGIN_PAGE;
+		
 		String tariffNameDelete = request.getParameter("tariffNameDelete");
 		String serviceId = request.getParameter("serviceId");
 		

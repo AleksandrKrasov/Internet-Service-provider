@@ -14,6 +14,7 @@ import javax.servlet.jsp.jstl.core.Config;
 import org.apache.log4j.Logger;
 import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.controller.commands.Command;
+import ua.khpi.krasov.db.Language;
 import ua.khpi.krasov.db.Status;
 import ua.khpi.krasov.db.dao.OrderDao;
 import ua.khpi.krasov.db.dao.TariffDao;
@@ -35,14 +36,20 @@ public class BillRefillCommand implements Command {
 		HttpSession session = request.getSession();
 		
 		if(session.getAttribute("user") == null)
-			response.sendRedirect(Path.LOGIN_PAGE);
+			return Path.LOGIN_PAGE;
 		
 		User user = (User) session.getAttribute("user");
 		user = new UserDao().getUserByLogin(user.getLogin());
 		session.setAttribute("user", user);
-		session.setAttribute("status", Status.getStatus(user).getName());
-		log.trace("User status id == > " + user.getStatus_id());
-		log.trace("Status refreshed in session.");
+		
+		Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
+		Language lang = Language.getLanguage(locale);
+		
+		if(lang.equals(Language.RU)) {
+			session.setAttribute("status", Status.getStatus(user).getNameRu());
+		} else 
+			session.setAttribute("status", Status.getStatus(user).getName());
+		log.trace("User refreshed is session.");
 
 		String sum = request.getParameter("summ");
 		

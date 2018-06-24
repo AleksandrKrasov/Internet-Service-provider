@@ -1,23 +1,25 @@
 package ua.khpi.krasov.db;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
 
+/**
+ * DB manager. Works with MySQL DB. 
+ * Class implements singleton pattern
+ * 
+ * @author A.Krasov
+ * 
+ */
 public class DBManager {
 	
 	private static final Logger log = Logger.getLogger(DBManager.class);
 	
-
-	// //////////////////////////////////////////////////////////
-	// singleton
-	// //////////////////////////////////////////////////////////
-
 	private static DBManager instance;
 
 	public static synchronized DBManager getInstance() {
@@ -41,7 +43,6 @@ public class DBManager {
 			con = ds.getConnection();
 		} catch (NamingException ex) {
 			log.error("Cannot obtain a connection from the pool", ex);
-			ex.printStackTrace();
 		}
 		return con;
 	}
@@ -79,5 +80,22 @@ public class DBManager {
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Returns a DB connection. This method is for testing.
+	 * It does not use a pool
+	 * connections and not used in this project. It is preferable to use
+	 * {@link #getConnection()} method instead.
+	 * 
+	 * @return A DB connection.
+	 */
+	public Connection getConnectionWithDriverManager() throws SQLException {
+		Connection connection = DriverManager
+				.getConnection("jdbc:mysql://localhost/practice8?serverTimezone=UTC&useSSL=false&" + 
+						"user=root&password=12345");
+		connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+		connection.setAutoCommit(false);
+		return connection;
 	}
 }

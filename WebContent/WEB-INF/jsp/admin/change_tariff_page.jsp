@@ -15,7 +15,7 @@
 	
 	<div class="login-page">
 		<div class="form">
-			<form action="Controller" method="get">
+			<form action="Controller" method="POST">
 				<input type="hidden" name="command" value="changeTariff" />
 				<input type="hidden" name="serviceId" value="${serviceId}" />
 				<input type="hidden" name="tariffName" value="${tariff.name}" />

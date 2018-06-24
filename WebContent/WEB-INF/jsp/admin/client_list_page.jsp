@@ -34,7 +34,7 @@
 					<td>${clientList[i].bill} <fmt:message key="head.currency"/></td>
 					<td>${statusNames[i]}</td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="clientList" />
 							<select name="changeStatus">
 								<c:forEach begin="1" end="2" var="j">
@@ -46,7 +46,7 @@
 						</form>
 					</td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="clientList" /> 
 							<input type="hidden" name="delete" value="true" /> 
 							<input type="hidden" name="clientLogin" value="${clientList[i].login}" />

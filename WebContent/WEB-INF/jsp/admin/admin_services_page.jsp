@@ -27,21 +27,21 @@
 				<tr>
 					<td>${serviceNames[i]}</td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="adminTariffs" /> <input
 								type="hidden" name="serviceId" value="${servicelist[i].id}" />
 							<button><fmt:message key="service.tariffs"/></button>
 						</form>
 					</td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="renameService" /> <input
 								type="hidden" name="serviceName" value="${servicelist[i].name}" />
 							<button><fmt:message key="service.rename"/></button>
 						</form>
 					</td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="adminServices" /> <input
 								type="hidden" name="serviceName" value="${servicelist[i].name}" />
 							<button><fmt:message key="service.delete"/></button>
@@ -52,7 +52,7 @@
 		</c:if>
 		<tr>
 			<td colspan="4">
-				<form class="login-form" action="Controller" method="get">
+				<form class="login-form" action="Controller" method="POST">
 					<input type="hidden" name="command" value="addService" />
 					<button><fmt:message key="service.add"/></button>
 				</form>

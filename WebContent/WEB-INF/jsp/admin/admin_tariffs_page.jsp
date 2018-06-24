@@ -30,7 +30,7 @@
 					<td>${tariffDescs[i]}</td>
 					<td>${tariffs[i].price} <fmt:message key="head.currency"/></td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="changeTariff" />
 							<input type="hidden" name="serviceId" value="${serviceId}" />
 							<input type="hidden" name="tariffName" value="${tariffs[i].name}" /> 
@@ -38,7 +38,7 @@
 						</form>
 					</td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="adminTariffs" />
 							<input type="hidden" name="serviceId" value="${serviceId}" />
 							<input type="hidden" name="tariffNameDelete" value="${tariffs[i].name}" />
@@ -50,7 +50,7 @@
 		</c:if>
 		<tr>
 			<td colspan="5">
-				<form class="login-form" action="Controller" method="get">
+				<form class="login-form" action="Controller" method="POST">
 					<input type="hidden" name="command" value="addTariff" />
 					<input type="hidden" name="serviceId" value="${serviceId}" /> 
 					<button><fmt:message key="tariff.add"/></button>

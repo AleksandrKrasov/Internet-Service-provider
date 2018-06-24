@@ -15,7 +15,7 @@
 	</c:if>	
 	<c:if test="${not empty user && user.roleId == 0}">
 		<%@ include file="/WEB-INF/jsp/admin/admin_head.jsp" %>
-	</c:if>		
+	</c:if>	
 	
 	<c:set var="saved" value="${param['saved']}"/>
 	
@@ -26,7 +26,7 @@
 					<p><fmt:message key="settings.saved"/></p>
 				</c:when>
 				<c:otherwise>
-					<form action="Controller" method="get" >
+					<form action="Controller" method="POST" >
 						<input type="hidden" name="command" value="settings"/>
 						<input type="hidden" name="submit" value="true"/>
 						<p><fmt:message key="settings.language"/></p>

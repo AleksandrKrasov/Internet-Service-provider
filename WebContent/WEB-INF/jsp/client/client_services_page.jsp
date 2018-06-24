@@ -25,7 +25,7 @@
 				<tr>
 					<td>${serviceNames[i]}</td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="clientTariffs" /> <input
 								type="hidden" name="serviceName" value="${servicelist[i].name}" /> <input
 								type="hidden" name="serviceId" value="${servicelist[i].id}" />

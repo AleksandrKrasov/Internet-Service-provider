@@ -12,7 +12,7 @@
 	
 	<div class="login-page">
   		<div class="form">
-    		<form class="login-form" action="Controller" method="get">
+    		<form class="login-form" action="Controller" method="POST">
     			<input type="hidden" name="command" value="addService"/>
       			<input type="text" name="nameEn" placeholder="<fmt:message key="service.nameEn"/>"/>
       			<input type="text" name="nameRu" placeholder="<fmt:message key="service.nameRu"/>"/>

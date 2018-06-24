@@ -14,7 +14,7 @@
 	
 	<div class="login-page">
 		<div class="form">
-			<form action="Controller" method="post" >
+			<form action="Controller" method="POST" >
 				<input type="hidden" name="command" value="addTariff"/>
 				<input type="hidden" name="serviceId" value="${serviceId}"/>
 				<input type="text" name="price" placeholder="<fmt:message key="tariff.price"/>">

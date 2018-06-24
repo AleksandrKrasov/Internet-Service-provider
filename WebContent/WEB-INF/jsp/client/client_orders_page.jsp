@@ -41,7 +41,7 @@
 					<td>${statusNames[order_i]}</td>
 					<td>${prices[order_i]} <fmt:message key="head.currency"/></td>
 					<td>
-						<form class="login-form" action="Controller" method="get">
+						<form class="login-form" action="Controller" method="POST">
 							<input type="hidden" name="command" value="clientOrders" /> <input
 								type="hidden" name="orderId" value="${orders[order_i].id}" />
 							<button><fmt:message key="orders.cancel"/></button>
