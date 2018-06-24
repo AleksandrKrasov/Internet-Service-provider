@@ -1,6 +1,5 @@
 package test.ua.khpi.krasov.db.dao;
 
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ua.khpi.krasov.db.dao.TariffDao;
@@ -46,8 +45,8 @@ class TariffDaoTest {
 	}
 
 	@Test
-	void testGetTariffByID() {
-		Assertions.assertNull(td.getTariffByID(2321));
+	void testGetTariffById() {
+		Assertions.assertNull(td.getTariffById(2321));
 	}
 
 	@Test

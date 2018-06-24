@@ -19,17 +19,30 @@ import ua.khpi.krasov.db.dao.UserDao;
 import ua.khpi.krasov.db.dao.interfaces.UserDaoInterface;
 import ua.khpi.krasov.db.entity.User;
 
+/**
+ * Client list command class. It implements command pattern
+ * and used show all clients an make operations over them.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ *
+ */
 public class ClientListCommand implements Command {
 	
 	private static final Logger log = Logger.getLogger(ClientListCommand.class);
-
+	
+	/**
+	 * Methods allows to get all clients. User may change 
+	 * client status to confirmed or block and delete the user.
+	 */
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.debug("Client list command starts");
 		
-		if(request.getSession().getAttribute("user") == null)
+		if (request.getSession().getAttribute("user") == null) {
 			return Path.LOGIN_PAGE;
+		}
 		
 		UserDaoInterface userDao = new UserDao();
 		
@@ -37,10 +50,10 @@ public class ClientListCommand implements Command {
 		String delete = (String) request.getParameter("delete");
 		String changeStatus = (String) request.getParameter("changeStatus");
 		
-		if(clientLogin != null && delete != null) {
+		if (clientLogin != null && delete != null) {
 			String redirect = Path.CLIENT_LIST_REDIRECT_PAGE;
 			log.trace("Deleting user with loging ==> " + clientLogin);
-			if(userDao.deleteUserByLogin(clientLogin)) {
+			if (userDao.deleteUserByLogin(clientLogin)) {
 				log.trace("User was deleted from DB.");
 				log.trace("Redirecting to ==>" + redirect);
 				response.sendRedirect(redirect);
@@ -50,15 +63,17 @@ public class ClientListCommand implements Command {
 				response.sendRedirect(redirect);
 			}
 			return null;
-		} else if(clientLogin != null && changeStatus != null) {
+		} else if (clientLogin != null && changeStatus != null) {
 			User user = userDao.getUserByLogin(clientLogin);
 			log.trace("Changing status for user with login ==> " + clientLogin);
 			
-			if(Status.BLOCKED.equals(Status.valueOf(changeStatus.toUpperCase())))
-				user.setStatus_id(Status.BLOCKED.getStatusId());
+			if (Status.BLOCKED.equals(Status.valueOf(changeStatus.toUpperCase()))) {
+				user.setStatusId(Status.BLOCKED.getStatusId());
+			}
 			
-			if(Status.CONFIRMED.equals(Status.valueOf(changeStatus.toUpperCase())))
-				user.setStatus_id(Status.CONFIRMED.getStatusId());
+			if (Status.CONFIRMED.equals(Status.valueOf(changeStatus.toUpperCase()))) {
+				user.setStatusId(Status.CONFIRMED.getStatusId());
+			}
 			
 			userDao.updateStatus(user);
 			log.trace("User status changed in DB to ==> " + changeStatus);
@@ -80,7 +95,7 @@ public class ClientListCommand implements Command {
 		Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
 		Language lang = Language.getLanguage(locale);
 		
-		if(lang.equals(Language.RU)) {
+		if (lang.equals(Language.RU)) {
 			radioStatusNames.add(Status.CONFIRMED.getNameRu());
 			radioStatusNames.add(Status.BLOCKED.getNameRu());
 			log.trace("Language ==> " + Language.RU);
@@ -89,7 +104,7 @@ public class ClientListCommand implements Command {
 			}
 		}
 		
-		if(lang.equals(Language.EN)) {
+		if (lang.equals(Language.EN)) {
 			radioStatusNames.add(Status.CONFIRMED.getName());
 			radioStatusNames.add(Status.BLOCKED.getName());
 			log.trace("Language ==> " + Language.EN);

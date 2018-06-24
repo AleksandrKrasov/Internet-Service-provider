@@ -14,17 +14,25 @@ import org.apache.log4j.Logger;
  * Class implements singleton pattern
  * 
  * @author A.Krasov
+ * @version 1.0
  * 
  */
-public class DBManager {
-	
-	private static final Logger log = Logger.getLogger(DBManager.class);
-	
-	private static DBManager instance;
+public class DbManager {
 
-	public static synchronized DBManager getInstance() {
-		if (instance == null)
-			instance = new DBManager();
+	private static final Logger log = Logger.getLogger(DbManager.class);
+	
+	private static DbManager instance;
+	
+	/**
+	 * Returns an instance of DbManager. Method allows to implement a 
+	 * singleton pattern. Method is synchronized to use in multithreading.
+	 * 
+	 * @return An instance of DbManager
+	 */
+	public static synchronized DbManager getInstance() {
+		if (instance == null) {
+			instance = new DbManager();
+		}
 		return instance;
 	}
 	
@@ -48,9 +56,9 @@ public class DBManager {
 	}
 
 	/**
-	 * Private contractor for singleton model
+	 * Private contractor for singleton pattern.
 	 */
-	private DBManager() {}
+	private DbManager() {}
 
 	/**
 	 * Commits and close the given connection.
@@ -92,8 +100,8 @@ public class DBManager {
 	 */
 	public Connection getConnectionWithDriverManager() throws SQLException {
 		Connection connection = DriverManager
-				.getConnection("jdbc:mysql://localhost/practice8?serverTimezone=UTC&useSSL=false&" + 
-						"user=root&password=12345");
+				.getConnection("jdbc:mysql://localhost/practice8?serverTimezone=UTC&useSSL=false&"
+						+ "user=root&password=12345");
 		connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 		connection.setAutoCommit(false);
 		return connection;

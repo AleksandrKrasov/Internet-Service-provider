@@ -1,5 +1,13 @@
 package ua.khpi.krasov.controller;
 
+/**
+ * Static class which contains all paths which
+ * which are used in application.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ *
+ */
 public class Path {
 	
 	public static final String LOGIN_PAGE = "/login.jsp";

@@ -11,10 +11,21 @@ import org.apache.log4j.Logger;
 
 import ua.khpi.krasov.controller.Path;
 
+/**
+ * Logout command class. It implements command pattern and
+ * used to logout.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ * 
+ */
 public class LogoutCommand implements Command {
 	
 	private static final Logger log = Logger.getLogger(LoginCommand.class);
-
+	
+	/**
+	 * Methods allows to log out from the web site.
+	 */
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {

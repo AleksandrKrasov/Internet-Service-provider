@@ -15,17 +15,31 @@ import ua.khpi.krasov.db.dao.interfaces.ServiceDaoInterface;
 import ua.khpi.krasov.db.entity.Service;
 import ua.khpi.krasov.db.validation.ValidationUtil;
 
+/**
+ * Service rename command class. It implements command pattern
+ * and used to to rename the service.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ *
+ */
 public class ServiceRanameCommand implements Command {
 
 	private static final Logger log = Logger.getLogger(ServiceRanameCommand.class);
-
+	
+	/**
+	 * Methods allows to rename the service. User may rename
+	 * name in both languages. If entered field is not valid
+	 * changes will not be saved.
+	 */
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.debug("Service rename command starts.");
 		
-		if(request.getSession().getAttribute("user") == null)
+		if (request.getSession().getAttribute("user") == null) {
 			return Path.LOGIN_PAGE;
+		}
 
 		String serviceName = request.getParameter("serviceName");
 

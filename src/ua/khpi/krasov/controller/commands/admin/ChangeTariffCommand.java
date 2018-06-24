@@ -14,23 +14,38 @@ import javax.servlet.jsp.jstl.core.Config;
 import org.apache.log4j.Logger;
 import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.controller.commands.Command;
-import ua.khpi.krasov.db.DBManager;
+import ua.khpi.krasov.db.DbManager;
 import ua.khpi.krasov.db.dao.TariffDao;
 import ua.khpi.krasov.db.dao.interfaces.TariffDaoInterface;
 import ua.khpi.krasov.db.entity.Tariff;
 import ua.khpi.krasov.db.validation.ValidationUtil;
 
+/**
+ * Change tariff command class. It implements command pattern
+ * and used to to change a tariff.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ *
+ */
 public class ChangeTariffCommand implements Command {
 
 	private static final Logger log = Logger.getLogger(ChangeTariffCommand.class);
-
+	
+	/**
+	 * Methods allows to change tariff. User may change
+	 * tariff name, description in both English and Russian
+	 * languages and price. If entered field is not valid
+	 * changes will not be saved.
+	 */
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.debug("Change tariff command starts.");
 		
-		if(request.getSession().getAttribute("user") == null)
+		if (request.getSession().getAttribute("user") == null) {
 			return Path.LOGIN_PAGE;
+		}
 
 		String tariffName = request.getParameter("tariffName");
 		log.trace("Param value ==> " + tariffName);
@@ -70,12 +85,13 @@ public class ChangeTariffCommand implements Command {
 
 		String errorMessage = null;
 		String forward = Path.ERROR_PAGE;
-		ResourceBundle bundle = ResourceBundle.getBundle("resources", (Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
+		ResourceBundle bundle = ResourceBundle.getBundle("resources",
+				(Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
 
 		Connection con = null;
 
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			con.setAutoCommit(false);
 
 			if (name != null && !name.isEmpty()) {
@@ -179,7 +195,7 @@ public class ChangeTariffCommand implements Command {
 		} catch (SQLException e1) {
 			log.error(e1);
 		} finally {
-			if(con != null) {
+			if (con != null) {
 				try {
 					log.debug("Connection closed.");
 					con.setAutoCommit(true);

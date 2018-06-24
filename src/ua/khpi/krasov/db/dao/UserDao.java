@@ -7,38 +7,51 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import ua.khpi.krasov.db.DBManager;
+import ua.khpi.krasov.db.DbManager;
 import ua.khpi.krasov.db.dao.interfaces.UserDaoInterface;
 import ua.khpi.krasov.db.entity.User;
 
-public class UserDao implements UserDaoInterface{
+/**
+ * DAO User class. This class allows to work with DB.
+ * This class allows to obtain data connecting with 'isp' DB
+ * and table 'users'. Class implements UserDaoInterface
+ * 
+ * @author A.Krasov
+ * @see UserDaoInterface
+ * @see User
+ * @version 1.0
+ * 
+ */
+public class UserDao implements UserDaoInterface {
 
-	//private static final Logger log = Logger.getLogger(UserDao.class);
+	private static String SQL_SELECT_ALL_USERS = "SELECT * FROM users";
+	
+	private static String SQL_SELECT_ALL_CLIENTS = "SELECT * FROM users WHERE role_id=1";
+	
+	private static String SQL_INSERT_USER = "INSERT INTO users VALUES (DEFAULT, ?, ?, ?, ?, DEFAULT, ?, DEFAULT)";
+	
+	private static String SQL_UPDATE_LOGIN = "UPDATE users SET login=? WHERE id=?";
+	
+	private static String SQL_FIND_USER_BY_LOGIN = "SELECT * FROM users WHERE login=?";
+	
+	private static String SQL_UPDATE_PASSWORD = "UPDATE users SET password=? WHERE id=?";
 
-	private String SQL_SELECT_ALL_USERS = "SELECT * FROM users";
+	private static String SQL_UPDATE_FIRST_NAME = "UPDATE users SET first_name=? WHERE id=?";
 	
-	private String SQL_SELECT_ALL_CLIENTS = "SELECT * FROM users WHERE role_id=1";
+	private static String SQL_UPDATE_LAST_NAME = "UPDATE users SET last_name=? WHERE id=?";
 	
-	private String SQL_INSERT_USER = "INSERT INTO users VALUES (DEFAULT, ?, ?, ?, ?, DEFAULT, ?, DEFAULT)";
+	private static String SQL_UPDATE_STATUS = "UPDATE users SET status_id=? WHERE id=?";
 	
-	private String SQL_UPDATE_LOGIN = "UPDATE users SET login=? WHERE id=?";
+	private static String SQL_UPDATE_BILL = "UPDATE users SET bill=? WHERE id=?";
 	
-	private String SQL_FIND_USER_BY_LOGIN = "SELECT * FROM users WHERE login=?";
-	
-	private String SQL_UPDATE_PASSWORD = "UPDATE users SET password=? WHERE id=?";
-
-	private String SQL_UPDATE_FIRST_NAME = "UPDATE users SET first_name=? WHERE id=?";
-	
-	private String SQL_UPDATE_LAST_NAME = "UPDATE users SET last_name=? WHERE id=?";
-	
-	private String SQL_UPDATE_STATUS = "UPDATE users SET status_id=? WHERE id=?";
-	
-	private String SQL_UPDATE_BILL = "UPDATE users SET bill=? WHERE id=?";
-	
-	private String SQL_DELETE_USER = "DELETE FROM users WHERE login=?";
+	private static String SQL_DELETE_USER = "DELETE FROM users WHERE login=?";
 	
 	
-	
+	/**
+	 * Method allows to obtained all data from DB.
+	 * @return List of User objects which obtains from DB
+	 * @see User
+	 */
 	@Override
 	public List<User> getAllUsers() {
 		List<User> users = new ArrayList<>();
@@ -48,7 +61,7 @@ public class UserDao implements UserDaoInterface{
 		ResultSet rs = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(SQL_SELECT_ALL_USERS);
 			while (rs.next()) {
@@ -69,7 +82,13 @@ public class UserDao implements UserDaoInterface{
 		return users;
 	}
 	
-
+	/**
+	 * Method allows to insert data to DB.
+	 * 
+	 * @param user which is instance of User
+	 * @return true if data successfully saved
+	 * @see User
+	 */
 	@Override
 	public boolean insertUser(User user) {
 		Connection con = null;
@@ -77,7 +96,7 @@ public class UserDao implements UserDaoInterface{
 		ResultSet rs = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS);
 			int k = 1;
 			pstmt.setString(k++, user.getLogin());
@@ -105,14 +124,20 @@ public class UserDao implements UserDaoInterface{
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Method allows to update user entity login in DB.
+	 * @param user entity
+	 * @return true if user entity successfully updated
+	 * @see User
+	 */
 	@Override
 	public boolean updateLogin(User user) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_UPDATE_LOGIN);
 			int k = 1;
 			pstmt.setString(k++, user.getLogin());
@@ -134,19 +159,25 @@ public class UserDao implements UserDaoInterface{
 		return false;
 	}
 
+	/**
+	 * Method allows to update user entity password in DB.
+	 * @param user entity
+	 * @return true if user entity successfully updated
+	 * @see User
+	 */
 	@Override
 	public boolean updatePassword(User user) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_UPDATE_PASSWORD);
 			int k = 1;
 			pstmt.setString(k++, user.getPassword());
 			pstmt.setInt(k++, user.getId());
 			if (pstmt.executeUpdate() > 0) {
-					return true;
+				return true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -162,19 +193,25 @@ public class UserDao implements UserDaoInterface{
 		return false;
 	}
 
+	/**
+	 * Method allows to update user entity first name in DB.
+	 * @param user entity
+	 * @return true if user entity successfully updated
+	 * @see User
+	 */
 	@Override
 	public boolean updateFirstName(User user) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_UPDATE_FIRST_NAME);
 			int k = 1;
 			pstmt.setString(k++, user.getFirstName());
 			pstmt.setInt(k++, user.getId());
 			if (pstmt.executeUpdate() > 0) {
-					return true;
+				return true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -190,19 +227,25 @@ public class UserDao implements UserDaoInterface{
 		return false;
 	}
 
+	/**
+	 * Method allows to update user entity last name in DB.
+	 * @param user entity
+	 * @return true if user entity successfully updated
+	 * @see User
+	 */
 	@Override
 	public boolean updateLastName(User user) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_UPDATE_LAST_NAME);
 			int k = 1;
 			pstmt.setString(k++, user.getLastName());
 			pstmt.setInt(k++, user.getId());
 			if (pstmt.executeUpdate() > 0) {
-					return true;
+				return true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -218,6 +261,16 @@ public class UserDao implements UserDaoInterface{
 		return false;
 	}
 
+	/**
+	 * Method allows to extract user entity from DB.
+	 * Method should be used only in DAO class as handler.
+	 * 
+	 * @param rs result of query
+	 * @return User entity
+	 * @throws SQLException if SQL exceptions happen
+	 * @see ResultSet
+	 * @see User
+	 */
 	@Override
 	public User extractUser(ResultSet rs) throws SQLException {
 		User user = new User();
@@ -228,10 +281,16 @@ public class UserDao implements UserDaoInterface{
 		user.setLastName(rs.getString("last_name"));
 		user.setBill(rs.getInt("bill"));
 		user.setRoleId(rs.getInt("role_id"));
-		user.setStatus_id(rs.getInt("status_id"));
+		user.setStatusId(rs.getInt("status_id"));
 		return user;
 	}
 
+	/**
+	 * Method allows to get User entity by its login in DB.
+	 * @param login which will be searched for
+	 * @return User entity
+	 * @see User
+	 */
 	@Override
 	public User getUserByLogin(String login) {
 		Connection con = null;
@@ -239,7 +298,7 @@ public class UserDao implements UserDaoInterface{
 		ResultSet rs = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_FIND_USER_BY_LOGIN);
 			int k = 1;
 			pstmt.setString(k++, login);
@@ -261,7 +320,12 @@ public class UserDao implements UserDaoInterface{
 		return null;
 	}
 
-
+	/**
+	 * Method allows to delete user entity by its login from DB.
+	 * @param login which will be searched for
+	 * @return true if user successfully deleted
+	 * @see User
+	 */
 	@Override
 	public boolean deleteUserByLogin(String login) {
 		boolean res = false;
@@ -269,7 +333,7 @@ public class UserDao implements UserDaoInterface{
 		PreparedStatement pstmt = null;
 
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_DELETE_USER);
 			int k = 1;
 			pstmt.setString(k++, login);
@@ -287,20 +351,25 @@ public class UserDao implements UserDaoInterface{
 		return res;
 	}
 
-
+	/**
+	 * Method allows to update user entity bill in DB.
+	 * @param user entity
+	 * @return true if user entity successfully updated
+	 * @see User
+	 */
 	@Override
 	public boolean updateBill(User user) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_UPDATE_BILL);
 			int k = 1;
 			pstmt.setInt(k++, user.getBill());
 			pstmt.setInt(k++, user.getId());
 			if (pstmt.executeUpdate() > 0) {
-					return true;
+				return true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -315,20 +384,25 @@ public class UserDao implements UserDaoInterface{
 		return false;
 	}
 
-
+	/**
+	 * Method allows to update user entity status in DB.
+	 * @param user entity
+	 * @return true if user entity successfully updated
+	 * @see User
+	 */
 	@Override
 	public boolean updateStatus(User user) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			pstmt = con.prepareStatement(SQL_UPDATE_STATUS);
 			int k = 1;
-			pstmt.setInt(k++, user.getStatus_id());
+			pstmt.setInt(k++, user.getStatusId());
 			pstmt.setInt(k++, user.getId());
 			if (pstmt.executeUpdate() > 0) {
-					return true;
+				return true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -343,7 +417,11 @@ public class UserDao implements UserDaoInterface{
 		return false;
 	}
 
-
+	/**
+	 * Method allows to obtained all users who are clients.
+	 * @return List of User objects which obtains from DB
+	 * @see User
+	 */
 	@Override
 	public List<User> getAllClients() {
 		List<User> users = new ArrayList<>();
@@ -353,7 +431,7 @@ public class UserDao implements UserDaoInterface{
 		ResultSet rs = null;
 		
 		try {
-			con = DBManager.getInstance().getConnection();
+			con = DbManager.getInstance().getConnection();
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(SQL_SELECT_ALL_CLIENTS);
 			while (rs.next()) {

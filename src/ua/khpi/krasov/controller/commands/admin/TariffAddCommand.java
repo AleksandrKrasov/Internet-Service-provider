@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 
 import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.controller.commands.Command;
-import ua.khpi.krasov.db.DBManager;
+import ua.khpi.krasov.db.DbManager;
 import ua.khpi.krasov.db.dao.ServiceDao;
 import ua.khpi.krasov.db.dao.ServiceTariffsDao;
 import ua.khpi.krasov.db.dao.TariffDao;
@@ -26,17 +26,33 @@ import ua.khpi.krasov.db.entity.Service;
 import ua.khpi.krasov.db.entity.Tariff;
 import ua.khpi.krasov.db.validation.ValidationUtil;
 
+/**
+ * Add tariff command class. It implements command pattern
+ * and used to add a new tariff by administrator. This
+ * functional is not available for a client.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ *
+ */
 public class TariffAddCommand implements Command {
 
 	private static final Logger log = Logger.getLogger(TariffAddCommand.class);
-
+	
+	/**
+	 * Methods allows to add a new tariff. Tariff must
+	 * contains 2 names, 2 descriptions in English and Russian 
+	 * and price. If one of the filed is empty or names are not valid, 
+	 * the system does not allows administrator to add a tariff.
+	 */
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.debug("Tariff add command starts.");
 		
-		if(request.getSession().getAttribute("user") == null)
+		if (request.getSession().getAttribute("user") == null) {
 			return Path.LOGIN_PAGE;
+		}
 
 		String name = request.getParameter("name");
 		String price = request.getParameter("price");
@@ -47,8 +63,8 @@ public class TariffAddCommand implements Command {
 		String descriptionRu = request.getParameter("descriptionRu");
 
 		if (name != null && !name.isEmpty() && price != null && !price.isEmpty() && description != null
-				&& !description.isEmpty() && serviceId != null && !serviceId.isEmpty() &&
-				nameRu != null && !nameRu.isEmpty() && descriptionRu!= null && !descriptionRu.isEmpty()) {
+				&& !description.isEmpty() && serviceId != null && !serviceId.isEmpty()
+				&& nameRu != null && !nameRu.isEmpty() && descriptionRu != null && !descriptionRu.isEmpty()) {
 			log.trace("Name value ==> " + name);
 			log.trace("Price value ==> " + price);
 			log.trace("Description value ==> " + description);
@@ -60,7 +76,8 @@ public class TariffAddCommand implements Command {
 
 			String errorMessage = null;
 			String forward = Path.ERROR_PAGE;
-			ResourceBundle bundle = ResourceBundle.getBundle("resources", (Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
+			ResourceBundle bundle = ResourceBundle.getBundle("resources",
+					(Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
 
 			try {
 				priceInt = Integer.parseInt(price);
@@ -85,7 +102,7 @@ public class TariffAddCommand implements Command {
 				TariffDaoInterface tariffDao = new TariffDao();
 
 				try {
-					Connection con = DBManager.getInstance().getConnection();
+					Connection con = DbManager.getInstance().getConnection();
 					con.setAutoCommit(false);
 
 					tariffDao.insertTariff(tariff);
@@ -96,8 +113,9 @@ public class TariffAddCommand implements Command {
 
 					Service service = serviceDao.getServiceById(Integer.valueOf(serviceId));
 
-					if(serTarDao.insertTariffForService(tariff, service)) {
-						log.trace("tariff (" + tariff.getName() + ") added to service (" + service.getName() + ")");
+					if (serTarDao.insertTariffForService(tariff, service)) {
+						log.trace("tariff (" + tariff.getName() + ") added to service ("
+								+ service.getName() + ")");
 					} else {
 						con.rollback();
 						log.warn("Tariff was not added to service, changes rollback");

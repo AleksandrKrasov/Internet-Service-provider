@@ -19,7 +19,13 @@ import ua.khpi.krasov.controller.commands.client.ClientOrderCommand;
 import ua.khpi.krasov.controller.commands.client.ClientServiceCommand;
 import ua.khpi.krasov.controller.commands.client.ClientTariffCommand;
 
-
+/**
+ * CommandContainer. It use for command pattern.
+ * It contains all commands used in application.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ */
 public class CommandContainer {
 	
 	private static final Logger log = Logger.getLogger(CommandContainer.class);

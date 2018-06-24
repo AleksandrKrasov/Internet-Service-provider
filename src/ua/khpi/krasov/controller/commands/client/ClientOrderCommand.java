@@ -5,17 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.core.Config;
-
 import org.apache.log4j.Logger;
-
 import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.controller.commands.Command;
+import ua.khpi.krasov.db.Language;
+import ua.khpi.krasov.db.Status;
 import ua.khpi.krasov.db.dao.OrderDao;
 import ua.khpi.krasov.db.dao.ServiceDao;
 import ua.khpi.krasov.db.dao.TariffDao;
@@ -25,13 +24,25 @@ import ua.khpi.krasov.db.dao.interfaces.ServiceDaoInterface;
 import ua.khpi.krasov.db.dao.interfaces.TariffDaoInterface;
 import ua.khpi.krasov.db.entity.Order;
 import ua.khpi.krasov.db.entity.User;
-import ua.khpi.krasov.db.Language;
-import ua.khpi.krasov.db.Status;
 
+/**
+ * Client order command class. It implements command pattern
+ * and used to show all client's orders. This
+ * functional is not available for a administrator.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ *
+ */
 public class ClientOrderCommand implements Command {
 	
 	private static final Logger log = Logger.getLogger(ClientOrderCommand.class);
-
+	
+	/**
+	 * Methods allows to get all client's orders.
+	 * User may see service, tariff and tariff status.
+	 * Method gives a possibility to delete an order.
+	 */
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -40,8 +51,9 @@ public class ClientOrderCommand implements Command {
 		HttpSession session = request.getSession();
 		
 		
-		if(session.getAttribute("user") == null)
+		if (session.getAttribute("user") == null) {
 			return Path.LOGIN_PAGE;
+		}
 		
 		User user = (User) session.getAttribute("user");
 		user = new UserDao().getUserByLogin(user.getLogin());
@@ -50,10 +62,11 @@ public class ClientOrderCommand implements Command {
 		Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
 		Language lang = Language.getLanguage(locale);
 		
-		if(lang.equals(Language.RU)) {
+		if (lang.equals(Language.RU)) {
 			session.setAttribute("status", Status.getStatus(user).getNameRu());
-		} else 
+		} else {
 			session.setAttribute("status", Status.getStatus(user).getName());
+		}
 		log.trace("User refreshed is session.");
 		
 		OrderDaoInterface orderDao = new OrderDao();
@@ -72,16 +85,17 @@ public class ClientOrderCommand implements Command {
 		String order = request.getParameter("orderId");
 		log.trace("Request param ==> " + order);
 		
-		if(order != null) {
+		if (order != null) {
 			log.debug("Deleting order starts");
 			
 			String errorMessage = null;		
 			String forward = Path.ERROR_PAGE;
-			ResourceBundle bundle = ResourceBundle.getBundle("resources", (Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
+			ResourceBundle bundle = ResourceBundle.getBundle("resources",
+					(Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
 			
 			Status status = Status.getStatus(user);
 			
-			if(!status.equals(Status.CONFIRMED)){
+			if (!status.equals(Status.CONFIRMED)) {
 				log.error("User is not confirmed/blocked");
 				errorMessage = bundle.getString("error.bill.blocked");
 				request.setAttribute("errorMessage", errorMessage);
@@ -91,7 +105,7 @@ public class ClientOrderCommand implements Command {
 			try {
 				int orderId = Integer.parseInt(order);
 				for (int i = 0; i < orders.size(); i++) {
-					if(orders.get(i).getId() == orderId) {
+					if (orders.get(i).getId() == orderId) {
 						orderDao.deleteOrder(orders.get(i));
 					}
 				}
@@ -113,19 +127,19 @@ public class ClientOrderCommand implements Command {
 		
 		for (int i = 0; i < orders.size(); i++) {
 			
-			prices.add(tariffDao.getTariffByID(orders.get(i).getTariffId()).getPrice());
+			prices.add(tariffDao.getTariffById(orders.get(i).getTariffId()).getPrice());
 			
-			if(lang.equals(Language.RU)) {
+			if (lang.equals(Language.RU)) {
 				log.trace("Language ==> " + Language.RU);
 				serviceNames.add(serviceDao.getServiceById(orders.get(i).getServiceId()).getNameRu());
-				tariffNames.add(tariffDao.getTariffByID(orders.get(i).getTariffId()).getNameRu());
+				tariffNames.add(tariffDao.getTariffById(orders.get(i).getTariffId()).getNameRu());
 				statusNames.add(Status.getStatus(orders.get(i)).getNameRu());
 			}
 			
-			if(lang.equals(Language.EN)) {
+			if (lang.equals(Language.EN)) {
 				log.trace("Language ==> " + Language.EN);
 				serviceNames.add(serviceDao.getServiceById(orders.get(i).getServiceId()).getName());
-				tariffNames.add(tariffDao.getTariffByID(orders.get(i).getTariffId()).getName());
+				tariffNames.add(tariffDao.getTariffById(orders.get(i).getTariffId()).getName());
 				statusNames.add(Status.getStatus(orders.get(i)).getName());
 			}
 		}

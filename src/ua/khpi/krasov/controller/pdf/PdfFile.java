@@ -1,14 +1,5 @@
 package ua.khpi.krasov.controller.pdf;
 
-
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import org.apache.log4j.Logger;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chapter;
 import com.itextpdf.text.Document;
@@ -23,7 +14,12 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import org.apache.log4j.Logger;
 import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.db.Language;
 import ua.khpi.krasov.db.dao.ServiceDao;
@@ -34,6 +30,15 @@ import ua.khpi.krasov.db.dao.interfaces.TariffDaoInterface;
 import ua.khpi.krasov.db.entity.Service;
 import ua.khpi.krasov.db.entity.Tariff;
 
+/**
+ * This class creates a PDF file which client may download.
+ * PDF file is created with the help of IText API. Language is
+ * presented by English and Russian.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ *
+ */
 public class PdfFile {
 	
 	private static final Logger log = Logger.getLogger(PdfFile.class);
@@ -41,18 +46,34 @@ public class PdfFile {
 	private String root;
 	
 	private ResourceBundle bundle;
-
+	
+	/**
+	 * Constructor allows to create the instance of this class which
+	 * takes 2 parameters.
+	 * @param root String value of the file path.
+	 * @param bundle ResourceBundle to determine the language
+	 */
 	public PdfFile(String root, ResourceBundle bundle) {
 		this.root = root;
 		this.bundle = bundle;
 		log.trace("Value for the field root ==> " + root);
 		log.trace("Value for the field bundle ==> " + bundle);
 	}
-
-	public void getPdfFile() throws DocumentException, MalformedURLException, IOException {
+	
+	/**
+	 * Method allows to create a PDF file with tariff descriptions.
+	 * The language of file depends on bundle field. It may be 
+	 * English or Russian. Method use ServiceTariffsDaoInterface, 
+	 * TariffDaoInterface in order to get data from DB.
+	 * 
+	 * @throws DocumentException in case of IText API exceptions
+	 * @throws IOException in case of IOException
+	 * @see ServiceTariffsDaoInterface
+	 */
+	public void getPdfFile() throws DocumentException, IOException {
 		log.debug("Creation pfd file starts.");
 		
-		List<Service> services = new ServiceDao().getAllServices();
+		final List<Service> services = new ServiceDao().getAllServices();
 		log.trace("Services were obtained from DB.");
 		
 		ServiceTariffsDaoInterface serviceTariffsDao = new ServiceTariffsDao();
@@ -88,22 +109,21 @@ public class PdfFile {
 			List<Integer> tariffIds = serviceTariffsDao.getAllIdByServiceId(services.get(i));
 			List<Tariff> tariffs = new ArrayList<>();
 			
-			
-			for(int id : tariffIds) {
-				tariffs.add(tariffDao.getTariffByID(id));
+			for (int id : tariffIds) {
+				tariffs.add(tariffDao.getTariffById(id));
 			}
 			
 			log.trace("Tariffs were obtained from DB, amount ==> " + tariffs.size());
 			
 			Paragraph title1 = null;
 			
-			if(lang.equals(Language.EN))
+			if (lang.equals(Language.EN)) {
 				title1 = new Paragraph(services.get(i).getName(), font);
-			else
+			} else {
 				title1 = new Paragraph(services.get(i).getNameRu(), font);
+			}
 			
-			
-			Section section = chapter.addSection(title1);
+			final Section section = chapter.addSection(title1);
 
 			//Creation of table object
 			PdfPTable t = new PdfPTable(3);
@@ -126,21 +146,21 @@ public class PdfFile {
 			
 			font.setColor(BaseColor.BLACK);
 			
-			for(Tariff tariff : tariffs) {
+			for (Tariff tariff : tariffs) {
 				Phrase name = null;
 				Phrase description = null;
-				Phrase price = new Phrase(String.valueOf(tariff.getPrice()) + " " + bundle.getString("head.currency"), font);
-				
-				if(lang.equals(Language.EN)) {
+				if (lang.equals(Language.EN)) {
 					name = new Phrase(tariff.getName(), font);
 					description = new Phrase(tariff.getDescription(), font);
 				} else {
 					name = new Phrase(tariff.getNameRu(), font);
 					description = new Phrase(tariff.getDescriptionRu(), font);
 				}
-				
 				t.addCell(name);
 				t.addCell(description);
+				
+				Phrase price = new Phrase(String.valueOf(tariff.getPrice()) 
+						+ " " + bundle.getString("head.currency"), font);
 				t.addCell(price);
 			}
 			section.add(t);
@@ -150,7 +170,6 @@ public class PdfFile {
 		}
 
 		document.add(chapter);
-		
 		document.close();
 		writer.close();
 		log.trace("Document closed.");

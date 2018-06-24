@@ -11,6 +11,14 @@ import javax.servlet.ServletContextListener;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+/**
+ * Context listener. It allows to initialize i18n subsystem
+ * and Initializes log4j framework. The log4j properties file
+ * stored in WEB-INF/log4j.properties.
+ * 
+ * @author A.Krasov
+ *
+ */
 public class ContextInitListener implements ServletContextListener {
 	
 	private static final Logger log = Logger.getLogger(ContextInitListener.class);
@@ -18,7 +26,6 @@ public class ContextInitListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		ServletContext servletContext = sce.getServletContext();
-		
 		initLog4J(servletContext);
 		initI18N(servletContext);
 	}
@@ -28,7 +35,6 @@ public class ContextInitListener implements ServletContextListener {
 		log("Servlet context destruction starts");
 		// do nothing
 		log("Servlet context destruction finished");
-		// do nothing
 	}
 	
 	private void log(String msg) {
@@ -62,7 +68,7 @@ public class ContextInitListener implements ServletContextListener {
 	/**
 	 * Initializes log4j framework.
 	 * 
-	 * @param servletContext
+	 * @param servletContext to get add info
 	 */
 	private void initLog4J(ServletContext servletContext) {
 		log("Log4J initialization started");

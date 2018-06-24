@@ -1,5 +1,14 @@
 package ua.khpi.krasov.db.entity;
 
+/**
+ * Entity User class. It allows to store data from
+ * DB. Class does not have any logic. Class extends Entity class.
+ * This is serializable.
+ * 
+ * @author A.Krasov
+ * @see Entity
+ *
+ */
 public class User extends Entity {
 
 	private static final long serialVersionUID = 168170747199087024L;
@@ -8,7 +17,7 @@ public class User extends Entity {
 	
 	private String firstName;
 	
-	private String LastName;
+	private String lastName;
 	
 	private String password;
 	
@@ -16,7 +25,7 @@ public class User extends Entity {
 	
 	private int bill;
 	
-	private int status_id;
+	private int statusId;
 
 	public String getLogin() {
 		return login;
@@ -35,11 +44,11 @@ public class User extends Entity {
 	}
 
 	public String getLastName() {
-		return LastName;
+		return lastName;
 	}
 
 	public void setLastName(String lastName) {
-		LastName = lastName;
+		this.lastName = lastName;
 	}
 
 	public String getPassword() {
@@ -66,18 +75,18 @@ public class User extends Entity {
 		this.bill = bull;
 	}
 
-	public int getStatus_id() {
-		return status_id;
+	public int getStatusId() {
+		return statusId;
 	}
 
-	public void setStatus_id(int status_id) {
-		this.status_id = status_id;
+	public void setStatusId(int statusId) {
+		this.statusId = statusId;
 	}
 
 	@Override
 	public String toString() {
-		return "User [login=" + login + ", firstName=" + firstName + ", LastName=" + LastName + ", password=" + password
-				+ ", roleId=" + roleId + ", bill=" + bill + ", status_id=" + status_id + "]";
+		return "User [login=" + login + ", firstName=" + firstName + ", LastName=" + lastName + ", password=" + password
+				+ ", roleId=" + roleId + ", bill=" + bill + ", status_id=" + statusId + "]";
 	}
 	
 }

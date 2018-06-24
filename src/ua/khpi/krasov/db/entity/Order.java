@@ -1,5 +1,14 @@
 package ua.khpi.krasov.db.entity;
 
+/**
+ * Entity Order class. It allows to store data from
+ * DB. Class does not have any logic. Class extends Entity class.
+ * This is serializable.
+ * 
+ * @author A.Krasov
+ * @see Entity
+ *
+ */
 public class Order extends Entity {
 
 	private static final long serialVersionUID = 2329442001992053581L;

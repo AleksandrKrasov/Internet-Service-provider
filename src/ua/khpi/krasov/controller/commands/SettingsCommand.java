@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.jstl.core.Config;
 import org.apache.log4j.Logger;
 import ua.khpi.krasov.controller.Path;
-import ua.khpi.krasov.db.DBManager;
+import ua.khpi.krasov.db.DbManager;
 import ua.khpi.krasov.db.Language;
 import ua.khpi.krasov.db.Status;
 import ua.khpi.krasov.db.dao.UserDao;
@@ -21,17 +21,31 @@ import ua.khpi.krasov.db.dao.interfaces.UserDaoInterface;
 import ua.khpi.krasov.db.entity.User;
 import ua.khpi.krasov.db.validation.ValidationUtil;
 
+/**
+ * Settings command class. It implements command pattern and
+ * used for login
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ *
+ */
 public class SettingsCommand implements Command {
 
 	private static final Logger log = Logger.getLogger(SettingsCommand.class);
-
+	
+	/**
+	 * Methods allows to to tune the system. User can
+	 * change login, password first and last name and 
+	 * choose the appropriate language.
+	 */
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		log.debug("Settings command starts.");
 		
-		if(request.getSession().getAttribute("user") == null)
+		if (request.getSession().getAttribute("user") == null) {
 			return Path.LOGIN_PAGE;
+		}
 
 		if (request.getParameter("submit") != null) {
 
@@ -44,48 +58,49 @@ public class SettingsCommand implements Command {
 			Connection conn = null;
 			
 			try {
-				conn = DBManager.getInstance().getConnection();
+				conn = DbManager.getInstance().getConnection();
 				conn.setAutoCommit(false);
 
-				String login = request.getParameter("login");
-				String password = request.getParameter("password");
-				String repeatPassword = request.getParameter("repeatPassword");
-				String firstName = request.getParameter("firstName");
-				String LastName = request.getParameter("lastName");
-				String language = request.getParameter("language");
+				final String login = request.getParameter("login");
+				final String password = request.getParameter("password");
+				final String repeatPassword = request.getParameter("repeatPassword");
+				final String firstName = request.getParameter("firstName");
+				final String LastName = request.getParameter("lastName");
+				final String language = request.getParameter("language");
 				
 				String errorMessage = null;		
 				String forward = Path.ERROR_PAGE;
 				
 				Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
-				if(locale == null) {
+				if (locale == null) {
 					locale = new Locale("ru");
-					Config.set( session, Config.FMT_LOCALE, locale);
+					Config.set(session, Config.FMT_LOCALE, locale);
 				}
 				
-				ResourceBundle bundle = ResourceBundle.getBundle("resources", (Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
+				ResourceBundle bundle = ResourceBundle.getBundle("resources", 
+						(Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
 				
 				String userLogin = user.getLogin();
 				String userPassword = user.getPassword();
 				String userFirstName = user.getFirstName();
 				String userLastName = user.getLastName();
 				
-				if(language != null) {
+				if (language != null) {
 					locale = new Locale(language);
-					Config.set( session, Config.FMT_LOCALE, locale);
+					Config.set(session, Config.FMT_LOCALE, locale);
 					
 					Language lang = Language.getLanguage(locale);
 					
 					Status status = Status.getStatus(user);
 					log.trace("userStatus --> " + status);
 					
-					if(lang.equals(Language.RU)) {
+					if (lang.equals(Language.RU)) {
 						log.trace("Language ==> " + Language.RU);
 						session.setAttribute("status", status.getNameRu());
 						log.trace("Set the session attribute: status --> " + status);
 					}
 					
-					if(lang.equals(Language.EN)) {
+					if (lang.equals(Language.EN)) {
 						log.trace("Language ==> " + Language.EN);
 						session.setAttribute("status", status.getName());
 						log.trace("Set the session attribute: status --> " + status);
@@ -109,7 +124,8 @@ public class SettingsCommand implements Command {
 					}
 				}
 				
-				if (password != null && !password.isEmpty() && repeatPassword != null && !repeatPassword.isEmpty()) {
+				if (password != null && !password.isEmpty() 
+						&& repeatPassword != null && !repeatPassword.isEmpty()) {
 					log.debug("Changing password starts.");
 					user.setPassword(password);
 					if (ValidationUtil.validateUser(user) && password.equals(repeatPassword)) {

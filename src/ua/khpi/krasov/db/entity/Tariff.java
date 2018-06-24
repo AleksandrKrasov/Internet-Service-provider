@@ -1,6 +1,15 @@
 package ua.khpi.krasov.db.entity;
 
-public class Tariff extends Entity{
+/**
+ * Entity Tariff class. It allows to store data from
+ * DB. Class does not have any logic. Class extends Entity class.
+ * This is serializable.
+ * 
+ * @author A.Krasov
+ * @see Entity
+ *
+ */
+public class Tariff extends Entity {
 
 	private static final long serialVersionUID = 4623489646797735011L;
 	

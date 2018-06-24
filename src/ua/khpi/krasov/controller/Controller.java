@@ -12,7 +12,13 @@ import ua.khpi.krasov.controller.commands.Command;
 import ua.khpi.krasov.controller.commands.CommandContainer;
 
 /**
- * Servlet implementation class Controller
+ * Servlet implementation class Controller. Class
+ * implements command pattern. It is a main class
+ * in web logic. It serves as a dispatcher. Class
+ * takes a command and forward to the result page.
+ * 
+ * @author A.Krasov
+ * @version 1.0
  */
 @WebServlet("/Controller")
 public class Controller extends HttpServlet {
@@ -21,24 +27,36 @@ public class Controller extends HttpServlet {
 
 	private static final Logger log = Logger.getLogger(Controller.class);
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	/** 
+	 * Method only calls another method from this class.
+	 * @see Controller#execute(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		execute(request, response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	/** 
+	 * Method only calls another method from this class.
+	 * @see Controller#execute(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		execute(request, response);
 	}
-
+	
+	/**
+	 * This method get command name from the request and
+	 * takes a command from {@link CommandContainer#get(String)}
+	 * which returns the URL. After taking it, method forwards to
+	 * this URL.
+	 * 
+	 * @param request HttpServletRequest
+	 * @param response HttpServletResponse
+	 * @throws ServletException from HttpServletRequest
+	 * @throws IOException from CommandContainer
+	 * @see CommandContainer
+	 */
 	private void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		log.debug("Controller starts");

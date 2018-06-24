@@ -24,10 +24,24 @@ import ua.khpi.krasov.db.dao.interfaces.TariffDaoInterface;
 import ua.khpi.krasov.db.entity.Order;
 import ua.khpi.krasov.db.entity.User;
 
+/**
+ * Bill refill command class. It implements command pattern
+ * and used to refill the user bill. This
+ * functional is not available for a administrator.
+ * 
+ * @author A.Krasov
+ * @version 1.0
+ *
+ */
 public class BillRefillCommand implements Command {
 
 	private static final Logger log = Logger.getLogger(BillRefillCommand.class);
-
+	
+	/**
+	 * Methods allows to get all tariffs from chosen
+	 * service. Method also allows to make an order and to
+	 * sort orders by price and name.
+	 */
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -35,8 +49,9 @@ public class BillRefillCommand implements Command {
 		
 		HttpSession session = request.getSession();
 		
-		if(session.getAttribute("user") == null)
+		if (session.getAttribute("user") == null) {
 			return Path.LOGIN_PAGE;
+		}
 		
 		User user = (User) session.getAttribute("user");
 		user = new UserDao().getUserByLogin(user.getLogin());
@@ -45,10 +60,11 @@ public class BillRefillCommand implements Command {
 		Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
 		Language lang = Language.getLanguage(locale);
 		
-		if(lang.equals(Language.RU)) {
+		if (lang.equals(Language.RU)) {
 			session.setAttribute("status", Status.getStatus(user).getNameRu());
-		} else 
+		} else {
 			session.setAttribute("status", Status.getStatus(user).getName());
+		}
 		log.trace("User refreshed is session.");
 
 		String sum = request.getParameter("summ");
@@ -61,7 +77,8 @@ public class BillRefillCommand implements Command {
 		// error handler
 		String errorMessage = null;
 		String forward = Path.ERROR_PAGE;
-		ResourceBundle bundle = ResourceBundle.getBundle("resources", (Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
+		ResourceBundle bundle = ResourceBundle.getBundle("resources",
+				(Locale) Config.get(request.getSession(), Config.FMT_LOCALE));
 		
 		log.trace("Summ == > " + sum);
 
@@ -69,7 +86,7 @@ public class BillRefillCommand implements Command {
 			int summInt = 0;
 
 			//Checking if sum contains "-"
-			if(sum.contains("-")) {
+			if (sum.contains("-")) {
 				log.error("Sum contains \"-\"");
 				errorMessage = bundle.getString("error.bill.minus");
 				request.setAttribute("errorMessage", errorMessage);
@@ -88,14 +105,14 @@ public class BillRefillCommand implements Command {
 			
 			Status status = Status.getStatus(user);
 			
-			if(!status.equals(Status.CONFIRMED)){
+			if (!status.equals(Status.CONFIRMED)) {
 				log.error("User is not confirmed/blocked");
 				errorMessage = bundle.getString("error.bill.blocked");
 				request.setAttribute("errorMessage", errorMessage);
 				return forward;
 			}
 			
-			if(user.getBill() + summInt > 1000000) {
+			if (user.getBill() + summInt > 1000000) {
 				log.error("Bill is to big.");
 				errorMessage = bundle.getString("error.bill.max");
 				request.setAttribute("errorMessage", errorMessage);
@@ -109,12 +126,13 @@ public class BillRefillCommand implements Command {
 			OrderDaoInterface orderDao = new OrderDao();
 			List<Order> orders = orderDao.getOrdersByUser(user);
 			
-			if(orders.size() > 0) {
+			if (orders.size() > 0) {
 				TariffDaoInterface tariffDao = new TariffDao();
 				log.trace("User's orders found in DB.");
 				for (int i = 0; i < orders.size(); i++) {
-					int price = tariffDao.getTariffByID(orders.get(i).getTariffId()).getPrice();
-					if(orders.get(i).getStatusId() == Status.UNPAID.getStatusId() && user.getBill() >= price) {
+					int price = tariffDao.getTariffById(orders.get(i).getTariffId()).getPrice();
+					if (orders.get(i).getStatusId() == Status.UNPAID.getStatusId()
+							&& user.getBill() >= price) {
 						log.trace("Unpaid order found, automatically paid operation starts.");
 						user.setBill(user.getBill() - price);
 						orders.get(i).setStatusId(Status.PAID.getStatusId());
@@ -122,7 +140,7 @@ public class BillRefillCommand implements Command {
 						log.trace("Order status was update in DB");
 					}
 				}
-			}else {
+			} else {
 				log.trace("User's orders NOT found in DB.");
 			}
 
@@ -138,12 +156,13 @@ public class BillRefillCommand implements Command {
 		}
 		
 		//PRG pattern
-		if(session.getAttribute("completed") != null) {
+		if (session.getAttribute("completed") != null) {
 			session.setAttribute("completed", null);
 			log.trace("Resending!!! Redirect to controller with parameter(billRefill)");
 			response.sendRedirect(Path.BILL_REDIRECT_PAGE);
-		}else 
+		} else {
 			return Path.BILL_REFILL_PAGE;
+		}
 		//PRG pattern
 		return null;
 	}
