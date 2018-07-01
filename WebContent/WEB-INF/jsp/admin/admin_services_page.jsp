@@ -13,15 +13,17 @@
 	<c:set var="serviceNames" value="${requestScope.serviceNames}" />
 	<c:set var="servicelist" value="${requestScope.servicelist}" />
 	<c:set var="message" value="${param['completed']}" />
+	<c:set var="paidOrderAmount" value="${requestScope.paidOrderAmount}" />
 
 
 	<table class="table_blur">
-		<c:if test="${not empty servicelist && not empty serviceNames}">
+		<c:if test="${not empty servicelist && not empty serviceNames && not empty paidOrderAmount}">
 			<tr>
 				<th><fmt:message key="service.service"/></th>
 				<th></th>
 				<th></th>
 				<th></th>
+				<th><fmt:message key="oder.oderAmount"/></th>
 			</tr>
 			<c:forEach begin="0" end="${servicelist.size() - 1}" var="i">
 				<tr>
@@ -47,11 +49,14 @@
 							<button><fmt:message key="service.delete"/></button>
 						</form>
 					</td>
+					<td>
+						${paidOrderAmount[i]}
+					</td>
 				</tr>
 			</c:forEach>
 		</c:if>
 		<tr>
-			<td colspan="4">
+			<td colspan="5">
 				<form class="login-form" action="Controller" method="POST">
 					<input type="hidden" name="command" value="addService" />
 					<button><fmt:message key="service.add"/></button>

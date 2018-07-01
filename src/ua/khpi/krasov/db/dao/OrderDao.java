@@ -11,6 +11,7 @@ import java.util.List;
 import ua.khpi.krasov.db.DbManager;
 import ua.khpi.krasov.db.dao.interfaces.OrderDaoInterface;
 import ua.khpi.krasov.db.entity.Order;
+import ua.khpi.krasov.db.entity.Service;
 import ua.khpi.krasov.db.entity.User;
 
 /**
@@ -35,6 +36,8 @@ public class OrderDao implements OrderDaoInterface {
 	private static String SQL_FIND_ORDERS_BY_USER = "SELECT * FROM orders WHERE user_id=?";
 	
 	private static String SQL_UPDATE_ORDER_STATUS = "UPDATE orders SET status_id=? WHERE id=?";
+	
+	private static String SQL_FIND_ORDERS_AMOUNT_BY_SERVICE = "SELECT * FROM orders WHERE service_id=? AND status_id=3";
 	
 	/**
 	 * Method allows to obtained all data from DB.
@@ -237,6 +240,37 @@ public class OrderDao implements OrderDaoInterface {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public int getOrdersAmountByService(Service service) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		//List<Order> orders = new ArrayList<>();
+		int counter = 0;
+		
+		try {
+			con = DbManager.getInstance().getConnection();
+			pstmt = con.prepareStatement(SQL_FIND_ORDERS_AMOUNT_BY_SERVICE);
+			int k = 1;
+			pstmt.setInt(k++, service.getId());
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				counter ++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				pstmt.close();
+				con.close();
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return counter;
 	}
 		
 }

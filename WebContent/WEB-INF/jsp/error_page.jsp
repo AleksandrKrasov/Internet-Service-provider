@@ -57,10 +57,10 @@
 						<%-- this way we print exception stack trace --%>
 						<c:if test="${not empty exception}">
 						<hr/>
-						<h3>Stack trace:</h3>
-						<c:forEach var="stackTraceElement" items="${exception.stackTrace}">
+						<h3>EROR 404: page not found</h3>
+						<%-- <c:forEach var="stackTraceElement" items="${exception.stackTrace}">
 							${stackTraceElement}
-						</c:forEach>
+						</c:forEach> --%>
 					</c:if>	
 				</td>
 			</tr>

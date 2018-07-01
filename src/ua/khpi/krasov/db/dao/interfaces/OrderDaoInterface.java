@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import ua.khpi.krasov.db.entity.Order;
+import ua.khpi.krasov.db.entity.Service;
 import ua.khpi.krasov.db.entity.User;
 
 /**
@@ -71,4 +72,6 @@ public interface OrderDaoInterface {
 	 * @see Order
 	 */
 	boolean updateStatus(Order order);
+	
+	int getOrdersAmountByService(Service service);
 }

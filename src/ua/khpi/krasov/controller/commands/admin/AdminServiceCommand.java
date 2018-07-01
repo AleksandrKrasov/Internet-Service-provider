@@ -12,9 +12,11 @@ import javax.servlet.jsp.jstl.core.Config;
 
 import org.apache.log4j.Logger;
 
+import sun.net.NetworkServer;
 import ua.khpi.krasov.controller.Path;
 import ua.khpi.krasov.controller.commands.Command;
 import ua.khpi.krasov.db.Language;
+import ua.khpi.krasov.db.dao.OrderDao;
 import ua.khpi.krasov.db.dao.ServiceDao;
 import ua.khpi.krasov.db.dao.interfaces.ServiceDaoInterface;
 import ua.khpi.krasov.db.entity.Service;
@@ -61,6 +63,18 @@ public class AdminServiceCommand implements Command {
 		List<Service> servicelist = serviceDao.getAllServices();
 		List<String> serviceNames = new ArrayList<>();
 		log.trace("List of services from DB obtained");
+		
+		//Amount of paid orders
+		List<Integer> paidOrderAmount = new ArrayList<>();
+		
+		for(Service service: servicelist) {
+			paidOrderAmount.add(new OrderDao().getOrdersAmountByService(service));
+		}
+		
+		request.setAttribute("paidOrderAmount", paidOrderAmount);
+		//////////////////
+		
+		//System.out.println(paidOrderAmount);
 		
 		Locale locale = (Locale) Config.get(request.getSession(), Config.FMT_LOCALE);
 		Language lang = Language.getLanguage(locale);
